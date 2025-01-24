@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 
 from app.api.endpoints import (
-    getTitleRecTask,
-    sendTitleCrawlTask,
+    getTask,
+    recallTask,
     test
 )
 
 api_router = APIRouter()
 
-api_router.include_router(getTitleRecTask.router, tags=["getTitleRecTask"])
-api_router.include_router(sendTitleCrawlTask.router, tags=["sendTitleCrawlTask"])
+api_router.include_router(getTask.router, tags=["getTask"])
+api_router.include_router(recallTask.router, tags=["recallTask"])
 api_router.include_router(test.router, tags = ["test"])

@@ -37,7 +37,7 @@ def get_task_from_db(max_page=20):
                     temp_single_params["extract_list_params"] = json.loads(exist_one.extract_list_params)
                     all_params.append(temp_single_params)
     tasks = []
-    for param in all_params[:2]:
+    for param in all_params:
         taskA = spider_list.s(param)
         taskB = extract_list.s()
         tasks.append(chain(taskA, taskB))

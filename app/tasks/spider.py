@@ -41,15 +41,11 @@ def spider_rget(data):
 
     try:
         # 请求
-        print("------------------")
-        print(url)
-        print(headers)
         response = requests.get(url, headers=headers, timeout=10)
     except Exception as e:
         # 抓取失败捕获
         state["err_code"] = 401
         state["info"] = str(e)
-        print(state)
         return state
     
     if len(response.text) < 100:
