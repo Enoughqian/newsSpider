@@ -7,6 +7,7 @@ from app.tasks.tasks_gather import spider_page, extract_page
 from app.io.session import engine
 from sqlmodel import Session, select, update, func, or_, and_
 import json
+from loguru import logger
 
 # 任务执行顺序: 详情链接A抓取-解析 链接B抓取-解析
 # 读库，拼接任务参数，执行
@@ -36,7 +37,7 @@ def get_task_from_db(max_num=50):
             )
         )
         exist_basic = db.exec(smt).all()
-        print("数量: ", exist_basic)
+        logger.info("数量: "+ str(len(exist_basic)))
         for temp_basic in exist_basic[:max_num]:
             # 查询模板编号
             smt_info = select(PlatformInfo).where(PlatformInfo.platform_id == temp_basic.platform_id)
