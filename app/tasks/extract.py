@@ -141,14 +141,14 @@ def extract_page_html(data):
                     exist_data.pic_set = pic_set
                     exist_data.publish_date = publish_date
                     exist_data.country = country
-                    exist_data.abstract_state = 2
+                    exist_data.abstract_state = 0
                     exist_data.abstract = ""
-                    exist_data.translate_state = 2
+                    exist_data.translate_state = 0
                     exist_data.translate = ""
-                    exist_data.classify_state = 2
+                    exist_data.classify_state = 0
                     exist_data.classify = ""
-                    exist_data.vec_state = 2
-                    exist_data.extract_keyword_state = 2
+                    exist_data.vec_state = 0
+                    exist_data.extract_keyword_state = 0
                     exist_data.update_time = datetime.now()
                 # 全部提交
                 db.add(exist_data)

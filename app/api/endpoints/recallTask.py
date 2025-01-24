@@ -108,7 +108,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 if taskname == "genAbstract":
                     smt = select(NewsDetail).where(
                         and_(
-                            # NewsDetail.abstract_state == 0,
+                            NewsDetail.abstract_state == 0,
                             NewsDetail.unique_id == temp_id
                         )
                     )
@@ -122,7 +122,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 elif taskname == "genTranslate":
                     smt = select(NewsDetail).where(
                         and_(
-                            # NewsDetail.translate == 0,
+                            NewsDetail.translate == 0,
                             NewsDetail.unique_id == temp_id
                         )
                     )
@@ -136,7 +136,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 elif taskname == "genClassify":
                     smt = select(NewsDetail).where(
                         and_(
-                            # NewsDetail.classify_state == 0,
+                            NewsDetail.classify_state == 0,
                             NewsDetail.unique_id == temp_id
                         )
                     )
