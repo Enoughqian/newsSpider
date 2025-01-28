@@ -91,11 +91,11 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
     if taskname in ["genAbstract","genTranslate","genClassify"]:
         # 查表取出状态为0的, 不输入参数的情况下, 默认一次返回10条
         if taskname == "genAbstract":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 1)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 0)
         elif taskname == "genTranslate":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 1)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 0)
         else:
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 1)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 0)
         
         exist_data = db.exec(smt).fetchall()
 
