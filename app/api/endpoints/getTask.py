@@ -91,11 +91,11 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
     if taskname in ["genAbstract","genTranslate","genClassify"]:
         # 查表取出状态为0的, 不输入参数的情况下, 默认一次返回10条
         if taskname == "genAbstract":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 2)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 1)
         elif taskname == "genTranslate":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 2)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 1)
         else:
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 2)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 1)
         
         exist_data = db.exec(smt).fetchall()
 
@@ -106,12 +106,16 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
                 for temp in exist_data:
                     temp_id = temp.unique_id
                     temp_content = temp.content
-                    result.append(
-                        {
-                            "id": temp_id,
-                            "content": temp_content
-                        }
-                    )
+                    temp_smt = select(ListTask.id, ListTask.tag).where(ListTask.id == int(temp_id))
+                    temp_tag = db.exec(temp_smt).one_or_none()
+                    if temp_tag:
+                        if temp_tag.tag == 1:
+                            result.append(
+                                {
+                                    "id": temp_id,
+                                    "content": temp_content
+                                }
+                            )
                 # 过滤
                 filter_data = filter_lock_task(result, taskname, num, limit_time)
             
