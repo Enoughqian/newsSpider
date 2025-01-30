@@ -83,7 +83,6 @@ def extract_list_json(content, json_params):
     pass
 
 def extract_page_html(data):
-    print("====================")
     # 读取信息
     page_content = data["data"]
 
