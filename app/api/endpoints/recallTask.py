@@ -108,7 +108,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 if taskname == "genAbstract":
                     smt = select(NewsDetail).where(
                         and_(
-                            NewsDetail.abstract_state == 0,
                             NewsDetail.unique_id == temp_id
                         )
                     )
@@ -122,11 +121,17 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 elif taskname == "genTranslate":
                     smt = select(NewsDetail).where(
                         and_(
-                            NewsDetail.translate == 0,
                             NewsDetail.unique_id == temp_id
                         )
                     )
                     exist_data = db.exec(smt).one_or_none()
+                    # 列表类型处理
+                    try:
+                        temp_content = eval(temp_content)
+                        temp_content = ";".join([m for m in temp_content])
+                    except:
+                        pass
+                    
                     if exist_data:
                         exist_data.translate = temp_content
                         exist_data.translate_state = 1
@@ -136,7 +141,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 elif taskname == "genClassify":
                     smt = select(NewsDetail).where(
                         and_(
-                            NewsDetail.classify_state == 0,
                             NewsDetail.unique_id == temp_id
                         )
                     )

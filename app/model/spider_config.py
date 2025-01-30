@@ -8,6 +8,7 @@ class SpiderConfig(SQLModel, table=True):
 
     template_id: str = Field(primary_key=True)
     link_seed: str
+    page_params: str
     spider_list_func: str
     extract_list_func: str
     extract_list_params: str

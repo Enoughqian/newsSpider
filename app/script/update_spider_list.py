@@ -8,7 +8,7 @@ import json
 
 # 任务执行顺序: 列表A-1页——>2页
 # 读库，拼接任务参数，执行
-def get_task_from_db(max_page=20):
+def get_task_from_db():
     all_params = []
     # 查询基础信息
     with Session(engine, autoflush=False) as db:
@@ -21,7 +21,11 @@ def get_task_from_db(max_page=20):
             if not exist_one:
                 return {"info": temp.web_name + "缺失配置"}
             else:
-                for i in range(1, max_page+1):
+                # 序列化列表参数
+                page_params = exist_one.page_params
+                page_params = eval(page_params)
+
+                for i in page_params:
                     temp_single_params = {
                         "link": str(exist_one.link_seed).replace("PAGE",str(i))
                     }
