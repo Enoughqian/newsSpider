@@ -47,7 +47,7 @@ def get_task_from_db(max_num=50):
             smt_one = select(SpiderConfig).where(SpiderConfig.template_id == template_id)
             exist_data = db.exec(smt_one).one_or_none()
             if not exist_one:
-                return {"info": temp.web_name + "缺失配置"}
+                return {"info": "缺失配置"}
             else:
                 temp_params = {
                     "id": temp_basic.id,
