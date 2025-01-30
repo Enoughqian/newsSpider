@@ -99,7 +99,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         for temp in rs["data"]:
             try:
                 temp_id = int(temp["id"])
-                temp_content = str(temp["result"])
+                temp_content = ";".join(temp["result"])
                 # 判断为空
                 if len(temp_content) == 0:
                     fail_num += 1
@@ -126,12 +126,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     )
                     exist_data = db.exec(smt).one_or_none()
                     # 列表类型处理
-                    try:
-                        temp_content = eval(temp_content)
-                        temp_content = ";".join([m for m in temp_content])
-                    except:
-                        pass
-                    
                     if exist_data:
                         exist_data.translate = temp_content
                         exist_data.translate_state = 1
