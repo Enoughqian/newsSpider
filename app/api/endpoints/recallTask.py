@@ -64,7 +64,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         "genAbstract",
         "genTranslate",
         "genClassify",
-        "genKeyword"]:
+        "genKeyword"
+        ]:
         return_format_json["err_code"] = 201
         return_format_json["msg"] = "不支持的任务类型"
     
@@ -95,11 +96,11 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         except Exception as e:
             return_format_json["err_code"] = 202
             return_format_json["msg"] = str(e)
-    elif taskname in ["genAbstract","genTranslate","genClassify"]:
+    elif taskname in ["genAbstract", "genTranslate", "genClassify", "genKeyword"]:
         for temp in rs["data"]:
             try:
                 temp_id = int(temp["id"])
-                temp_content = ";".join(temp["result"])
+                temp_content = temp["result"]
                 # 判断为空
                 if len(temp_content) == 0:
                     fail_num += 1
@@ -140,8 +141,21 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     )
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
-                        exist_data.classify = temp_content
+                        exist_data.classify = ";".join([str(mm) for mm in temp_content])
                         exist_data.classify_state = 1
+                    else:
+                        fail_num += 1
+                        continue
+                elif taskname == "genKeyword":
+                    smt = select(NewsDetail).where(
+                        and_(
+                            NewsDetail.unique_id == temp_id
+                        )
+                    )
+                    exist_data = db.exec(smt).one_or_none()
+                    if exist_data:
+                        exist_data.keyword = ";".join([str(mm) for mm in temp_content])
+                        exist_data.keyword_state = 1
                     else:
                         fail_num += 1
                         continue

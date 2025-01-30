@@ -20,6 +20,7 @@ class NewsDetail(SQLModel, table=True):
     translate: str
     classify_state: int
     classify: str
+    keyword_state: int
+    keyword: str
     vec_state: int
-    extract_keyword_state: int
     update_time: datetime
