@@ -44,8 +44,9 @@ def extract_list_html(data):
             
             # 去除特殊符号
             for i in ["链接","发布机构","国家"]:
+                result[i] = result[i].apply(lambda x: str(x).strip())
                 result[i] = result[i].apply(lambda x: x.replace(":", ""))
-            
+                result[i] = result[i].apply(lambda x: x if x != "None" else "")
             # 拼接url
             result["链接"] = result["链接"].apply(lambda x: x if "http" in x else urljoin(domain, x))
 
@@ -194,21 +195,38 @@ if __name__ == "__main__":
         "data": "",
         "err_code": 0,
         "info": "Success",
-        "domain": "https://allafrica.com"
+        "domain": "https://allafrica.com",
+        "html_params": html_params
     }
 
-    with open("demo.html","r") as f:
-        data = f.read()
-    state["data"] = data
-    state["id"] = 10000
-    state["platform_id"] = "allafrica"
+    # html_params = {
+    #     "link": '//span[@class="article-card__content-wrapper"]/a/@href',
+    #     "title": '//span[@class="article-card__content-wrapper"]/a/span/text()',
+    #     "institution": '//span[@class="article-card__content-wrapper"]/span/span/span/span[1]/text()',
+    #     "country": '//x'
+    # }
+    # state = {
+    #     "data": "",
+    #     "err_code": 0,
+    #     "info": "Success",
+    #     "domain": "https://www.newsnow",
+    #     "extract_list_params": html_params
+    # }
 
+    with open("demo1.html","r") as f:
+        data = f.read()
+
+    state["data"] = data
+    state["platform_id"] = 1001
+
+    result = extract_list_html(state)
+    print(result)
 
     # html_params = {
     #     "content": "//div[@class='story-body']/p/text()",
     #     "pic_set": "//x",
     #     "publish_date": "//div[@class='publication-date']/text()"
     # }
-    extract_list_html(state, html_params)
+    
 
     # extract_page_html(state, html_params)
