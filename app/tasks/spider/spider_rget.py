@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 '''
 
 # get方法
-def spider_rget(data):
+def spider(data):
     # 获取url
     url = data.get("link","")
     headers = data.get("headers", 
@@ -58,14 +58,12 @@ def spider_rget(data):
 
 
 if __name__ == "__main__":
-    # data = {"url": "https://allafrica.com/latest/?page=PAGE".replace("PAGE","3")}
-    # result = spider_rget(data, headers)
-    # print(result)
+    data = {"link": "https://allafrica.com/latest/?page=PAGE".replace("PAGE","3")}
+    # data = {"link": "https://www.newsnow.co.uk/h/World+News/Asia/Myanmar?type=ln"}
+    # data = {"link": "https://allafrica.com/stories/202501200193.html"}
 
-    url = {"link": "https://allafrica.com/stories/202501200193.html"}
-    headers = {}
-    result = spider_rget(url, headers)
+    result = spider(data)
     print(result)
 
-    with open("demo1.html","w") as f:
+    with open("demo.html","w") as f:
         f.write(result["data"])
