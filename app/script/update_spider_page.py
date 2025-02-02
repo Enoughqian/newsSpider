@@ -1,6 +1,8 @@
 from celery import group, chord, chain
 from app.model.platform_info import PlatformInfo
-from app.model.spider_config import SpiderConfig
+from app.model.spider_list_config import SpiderListConfig
+from app.model.spider_page_config import SpiderPageConfig
+
 from app.model.list_task import ListTask
 from app.tasks.tasks_gather import spider_list, extract_list
 from app.tasks.tasks_gather import spider_page, extract_page
@@ -8,6 +10,7 @@ from app.io.session import engine
 from sqlmodel import Session, select, update, func, or_, and_
 import json
 from loguru import logger
+from urllib.parse import urlparse
 
 # 任务执行顺序: 详情链接A抓取-解析 链接B抓取-解析
 # 读库，拼接任务参数，执行
@@ -40,23 +43,25 @@ def get_task_from_db(max_num=50):
         logger.info("数量: "+ str(len(exist_basic)))
         for temp_basic in exist_basic[:max_num]:
             # 查询模板编号
-            smt_info = select(PlatformInfo).where(PlatformInfo.platform_id == temp_basic.platform_id)
+            temp_link = temp_basic.link
+            temp_id = temp_basic.id
+            temp_title = temp_basic.title
+            temp_platform_id = temp_basic.platform_id
+            temp_parse = urlparse(temp_link)
+            temp_domain = temp_parse.netloc
+            smt_info = select(SpiderPageConfig).where(SpiderPageConfig.domain == temp_domain)
             exist_one = db.exec(smt_info).one_or_none()
-            template_id = exist_one.template_id
-            # 查询模板内容
-            smt_one = select(SpiderConfig).where(SpiderConfig.template_id == template_id)
-            exist_data = db.exec(smt_one).one_or_none()
             if not exist_one:
                 return {"info": "缺失配置"}
             else:
                 temp_params = {
-                    "id": temp_basic.id,
-                    "platform_id": temp_basic.platform_id,
-                    "title": temp_basic.title,
-                    "link": temp_basic.link,
-                    "spider_page_func": exist_data.spider_page_func,
-                    "extract_page_func": exist_data.extract_page_func,
-                    "extract_page_params": json.loads(exist_data.extract_page_params)
+                    "link": temp_link,
+                    "id": temp_id,
+                    "platform_id": temp_platform_id,
+                    "title": temp_title,
+                    "spider_page_func": exist_one.spider_page_func,
+                    "extract_page_func": exist_one.extract_page_func,
+                    "extract_page_params": json.loads(exist_one.extract_page_params)
                 }
                 print(temp_params)
                 all_params.append(temp_params)

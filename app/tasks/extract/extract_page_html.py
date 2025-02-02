@@ -27,7 +27,8 @@ def extract(data):
     html_params = data.get("extract_page_params")
     # 根据配置解析
     if not data["err_code"]:
-        try:
+        # try:
+        if True:
             # 文章原始信息表入库
             with Session(engine, autoflush=False) as db:
                 smt = select(NewsOrigin).where(NewsOrigin.unique_id == unique_id)
@@ -85,20 +86,21 @@ def extract(data):
                 db.add(exist_data)
                 db.commit()
                 final_status = 1
-        except:
-            final_status = 0
+        # except:
+        #     final_status = 0
     else:
         final_status = 0
     
     # 更改列表爬虫状态为
-    with Session(engine, autoflush=False) as db:
-        smt = select(ListTask).where(ListTask.id == unique_id)
-        exist_data = db.exec(smt).one_or_none()
-        if exist_data:
-            exist_data.status = final_status
-        # 全部提交
-        db.add(exist_data)
-        db.commit()
+    if final_status:
+        with Session(engine, autoflush=False) as db:
+            smt = select(ListTask).where(ListTask.id == unique_id)
+            exist_data = db.exec(smt).one_or_none()
+            if exist_data:
+                exist_data.status = final_status
+                # 全部提交
+                db.add(exist_data)
+                db.commit()
 
 if __name__ == "__main__":
     pass

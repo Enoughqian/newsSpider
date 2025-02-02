@@ -1,6 +1,6 @@
 from celery import group, chord, chain
 from app.model.platform_info import PlatformInfo
-from app.model.spider_config import SpiderConfig
+from app.model.spider_list_config import SpiderListConfig
 from app.tasks.tasks_gather import spider_list, extract_list
 from app.io.session import engine
 from sqlmodel import Session, select, update, func, or_
@@ -16,7 +16,7 @@ def get_task_from_db():
         exist_data = db.exec(smt).all()
         for temp in exist_data:
             # 查询具体配置
-            smt_one = select(SpiderConfig).where(SpiderConfig.template_id == temp.template_id)
+            smt_one = select(SpiderListConfig).where(SpiderListConfig.template_id == temp.template_id)
             exist_one = db.exec(smt_one).one_or_none()
             if not exist_one:
                 return {"info": temp.web_name + "缺失配置"}
@@ -36,8 +36,6 @@ def get_task_from_db():
                     # 配置表信息
                     temp_single_params["spider_list_func"] = exist_one.spider_list_func
                     temp_single_params["extract_list_func"] = exist_one.extract_list_func
-                    temp_single_params["spider_page_func"] = exist_one.spider_page_func
-                    temp_single_params["extract_page_func"] = exist_one.extract_page_func
                     temp_single_params["extract_list_params"] = json.loads(exist_one.extract_list_params)
                     all_params.append(temp_single_params)
     tasks = []
@@ -52,9 +50,4 @@ def get_task_from_db():
 
 if __name__ == "__main__":
     print(get_task_from_db())
-
-# tasks.append(search_product.s(temp_data, now_cookie))
-#         # 控制执行结果
-#         task_group = group(tasks)
-#         result = task_group.apply_async()
     
