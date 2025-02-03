@@ -25,6 +25,8 @@ def extract(data):
     country = data.get("country", "")
     domain = data.get("domain", "")
     html_params = data.get("extract_page_params")
+    date_type = int(data.get("date_type"))
+
     # 根据配置解析
     if not data["err_code"]:
         # try:
@@ -47,12 +49,28 @@ def extract(data):
                 db.commit()
             
             # 文章解析数据处理
-            page_content = page_content.replace("<em>", "").replace("</em>","")
+            for i in ["<em>","</em>","<strong>","</strong>","<br>"]:
+                page_content = page_content.replace(i, "")
             page_html = etree.HTML(page_content)
             result = ["".join(page_html.xpath(xpath)) for key, xpath in html_params.items()]
             content = result[0]
-            pic_set = result[1]
-            publish_date = exchange_date(result[2], 1)
+            # 处理图片信息
+            pic_set = []
+            for i in result[1]:
+                i = str(i)
+                if len(i) >4:
+                    if "http" in i:
+                        pic_set.append(urljoin("https://" + domain, i))
+                    else:
+                        pic_set.append(i)
+                else:
+                    pic_set.append("")
+            pic_set = [urljoin("https:" + domain, i) for i in result[1]]
+            pic_set = ";".join(pic_set)
+            print("---------------")
+            print(pic_set)
+            # 处理日期信息
+            publish_date = exchange_date(result[2], date_type)
 
             # 数据入库
             with Session(engine, autoflush=False) as db:

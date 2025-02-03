@@ -7,6 +7,7 @@ class SpiderPageConfig(SQLModel, table=True):
     __table_args__ = {'extend_existing': True}
 
     domain: str = Field(primary_key=True)
+    date_type: int
     spider_page_func: str 
     extract_page_func: str
     extract_page_params: str

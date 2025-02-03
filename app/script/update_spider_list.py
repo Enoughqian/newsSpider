@@ -33,6 +33,7 @@ def get_task_from_db():
                     temp_single_params["platform_id"] = temp.platform_id
                     temp_single_params["web_name"] = temp.web_name
                     temp_single_params["template_id"] = temp.template_id
+                    temp_single_params["list_index"] = i
                     # 配置表信息
                     temp_single_params["spider_list_func"] = exist_one.spider_list_func
                     temp_single_params["extract_list_func"] = exist_one.extract_list_func

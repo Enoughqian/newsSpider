@@ -57,10 +57,12 @@ def get_task_from_db(max_num=50):
                 temp_params = {
                     "link": temp_link,
                     "id": temp_id,
+                    "domain": temp_domain,
                     "platform_id": temp_platform_id,
                     "title": temp_title,
                     "spider_page_func": exist_one.spider_page_func,
                     "extract_page_func": exist_one.extract_page_func,
+                    "date_type": exist_one.date_type,
                     "extract_page_params": json.loads(exist_one.extract_page_params)
                 }
                 print(temp_params)

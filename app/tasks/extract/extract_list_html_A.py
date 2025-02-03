@@ -28,6 +28,9 @@ def extract(data):
             domain = data["domain"]
             platform_id = data["platform_id"]
             
+            # 获取国家参数
+            country = data["list_index"]
+
             # 应用规则
             result = [page_html.xpath(xpath) for key, xpath in html_params.items()]
             
@@ -58,7 +61,7 @@ def extract(data):
                         exist_data.platform_id = platform_id
                         exist_data.title = item[1]
                         exist_data.institution = item[2]
-                        exist_data.country = item[3]
+                        exist_data.country = country
                         exist_data.tag = 2
                         exist_data.status = 2
                         exist_data.update_time = datetime.now()
