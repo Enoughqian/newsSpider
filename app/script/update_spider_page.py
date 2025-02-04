@@ -53,7 +53,7 @@ def get_task_from_db(max_num=50):
             smt_info = select(SpiderPageConfig).where(SpiderPageConfig.domain == temp_domain)
             exist_one = db.exec(smt_info).one_or_none()
             if not exist_one:
-                return {"info": "缺失配置"}
+                print({"info": "缺失配置"})
             else:
                 temp_params = {
                     "link": temp_link,
