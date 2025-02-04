@@ -14,6 +14,7 @@ from datetime import datetime
 from app.tools.tools import exchange_date
 
 def extract(data):
+
     # 读取信息
     page_content = data["data"]
 
@@ -22,15 +23,16 @@ def extract(data):
     platform_id = data.get("platform_id", "")
     title = data.get("title","")
     link = data.get("link","")
+    
     country = data.get("country", "")
+
     domain = data.get("domain", "")
     html_params = data.get("extract_page_params")
     date_type = int(data.get("date_type"))
 
     # 根据配置解析
     if not data["err_code"]:
-        # try:
-        if True:
+        try:
             # 文章原始信息表入库
             with Session(engine, autoflush=False) as db:
                 smt = select(NewsOrigin).where(NewsOrigin.unique_id == unique_id)
@@ -52,8 +54,10 @@ def extract(data):
             for i in ["<em>","</em>","<strong>","</strong>","<br>"]:
                 page_content = page_content.replace(i, "")
             page_html = etree.HTML(page_content)
-            result = ["".join(page_html.xpath(xpath)) for key, xpath in html_params.items()]
-            content = result[0]
+
+            result = [page_html.xpath(xpath) for key, xpath in html_params.items()]
+            content = "".join(result[0])
+
             # 处理图片信息
             pic_set = []
             for i in result[1]:
@@ -67,10 +71,9 @@ def extract(data):
                     pic_set.append("")
             pic_set = [urljoin("https:" + domain, i) for i in result[1]]
             pic_set = ";".join(pic_set)
-            print("---------------")
-            print(pic_set)
+
             # 处理日期信息
-            publish_date = exchange_date(result[2], date_type)
+            publish_date = exchange_date("".join(result[2]).strip(), date_type)
 
             # 数据入库
             with Session(engine, autoflush=False) as db:
@@ -104,8 +107,8 @@ def extract(data):
                 db.add(exist_data)
                 db.commit()
                 final_status = 1
-        # except:
-        #     final_status = 0
+        except:
+            final_status = 0
     else:
         final_status = 0
     

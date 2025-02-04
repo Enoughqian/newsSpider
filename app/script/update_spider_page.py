@@ -49,6 +49,7 @@ def get_task_from_db(max_num=50):
             temp_platform_id = temp_basic.platform_id
             temp_parse = urlparse(temp_link)
             temp_domain = temp_parse.netloc
+            temp_country = temp_basic.country
             smt_info = select(SpiderPageConfig).where(SpiderPageConfig.domain == temp_domain)
             exist_one = db.exec(smt_info).one_or_none()
             if not exist_one:
@@ -63,7 +64,8 @@ def get_task_from_db(max_num=50):
                     "spider_page_func": exist_one.spider_page_func,
                     "extract_page_func": exist_one.extract_page_func,
                     "date_type": exist_one.date_type,
-                    "extract_page_params": json.loads(exist_one.extract_page_params)
+                    "extract_page_params": json.loads(exist_one.extract_page_params),
+                    "country": temp_country
                 }
                 print(temp_params)
                 all_params.append(temp_params)
