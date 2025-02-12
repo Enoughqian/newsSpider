@@ -1,5 +1,10 @@
 from datetime import datetime
 from app.io.session import redis_client 
+import numpy as np
+
+# 函数：将 numpy 向量转换为 bytes
+def numpy_to_bytes(arr: np.ndarray) -> bytes:
+    return arr.tobytes()
 
 def filter_lock_task(id_list, task, num, lock_time):
     # 记录仍在锁定的 ID

@@ -27,10 +27,12 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
     '''
         任务类型:
             recTitle: 识别标题
+            recCountry: 识别国家
             genAbstract: 生成摘要
             genTranslate: 生成翻译
             genClassify: 生成分类标签
             genKeyword: 生成关键词
+            genVec: 生成向量
     '''
     num = int(num)
     return_format_json = {
@@ -42,10 +44,13 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
 
     if taskname not in [
         "recTitle",
+        "recCountry",
         "genAbstract",
         "genTranslate",
         "genClassify",
-        "genKeyword"]:
+        "genKeyword",
+        "genVec"
+        ]:
         return_format_json["err_code"] = 201
         return_format_json["msg"] = "不支持的任务类型"
 
@@ -88,21 +93,25 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
             return_format_json["err_code"] = 202
             return_format_json["msg"] = "报错: "+str(e)
     
-    if taskname in ["genAbstract","genTranslate","genClassify"]:
+    if taskname in ["genAbstract","genTranslate","genClassify","recCountry", "genVec"]:
         # 查表取出状态为0的, 不输入参数的情况下, 默认一次返回10条
         if taskname == "genAbstract":
             smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 0)
         elif taskname == "genTranslate":
             smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 0)
-        else:
+        elif taskname == "genClassify":
             smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 0)
-        
+        elif taskname == "genVec":
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.feature_state == 0)
+        else:
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.country_state == 0)
+
         exist_data = db.exec(smt).fetchall()
 
         try:
             result = []
             if exist_data:
-                # 取出全部任务
+                # 取出全部任务,兼容标题变化后的任务变动
                 for temp in exist_data:
                     temp_id = temp.unique_id
                     temp_content = temp.content

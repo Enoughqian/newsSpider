@@ -22,5 +22,9 @@ class NewsDetail(SQLModel, table=True):
     classify: str
     keyword_state: int
     keyword: str
-    vec_state: int
+    country_state: str
+    extract_country: int
+    feature_state: int
+    feature: bytes
+    cost: float
     update_time: datetime
