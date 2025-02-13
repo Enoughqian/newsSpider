@@ -116,6 +116,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     temp_cost = float(temp["cost"])
                 except:
                     temp_cost = 0
+
                 # 判断为空
                 if len(temp_content) == 0:
                     fail_num += 1
@@ -156,18 +157,19 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                             NewsDetail.unique_id == temp_id
                         )
                     )
-                    # ndarray转为向量
+                    # list转ndarray、转向量
                     try:
-                        content = numpy_to_bytes(content)
+                        temp_content = numpy_to_bytes(temp_content)
                     except:
                         continue
+                        fail_num += 1
 
                     exist_data = db.exec(smt).one_or_none()
                     # 列表类型处理
                     if exist_data:
                         exist_data.feature = temp_content
                         exist_data.cost += temp_cost
-                        exist_data.vec = 1
+                        exist_data.feature_state = 1
                     else:
                         fail_num += 1
                         continue

@@ -3,8 +3,16 @@ from app.io.session import redis_client
 import numpy as np
 
 # 函数：将 numpy 向量转换为 bytes
-def numpy_to_bytes(arr: np.ndarray) -> bytes:
-    return arr.tobytes()
+def numpy_to_bytes(arr):
+    arr = np.array(arr,dtype=np.float64)
+    binary_data = arr.tobytes()
+    return binary_data
+
+# bytes转为numpy
+def bytes_to_numpy(binary_data):
+    restored_array = np.frombuffer(binary_data, dtype=np.float64)  # 使用相同的数据类型
+    result_list = restored_array.tolist()
+    return result_list
 
 def filter_lock_task(id_list, task, num, lock_time):
     # 记录仍在锁定的 ID

@@ -102,7 +102,7 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
         elif taskname == "genClassify":
             smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 0)
         elif taskname == "genVec":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.feature_state == 0)
+            smt = select(NewsDetail.unique_id, NewsDetail.title).where(NewsDetail.feature_state == 0)
         else:
             smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.country_state == 0)
 
@@ -114,7 +114,10 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
                 # 取出全部任务,兼容标题变化后的任务变动
                 for temp in exist_data:
                     temp_id = temp.unique_id
-                    temp_content = temp.content
+                    if taskname == "genVec":
+                        temp_content = temp.title
+                    else:
+                        temp_content = temp.content
                     temp_smt = select(ListTask.id, ListTask.tag).where(ListTask.id == int(temp_id))
                     temp_tag = db.exec(temp_smt).one_or_none()
                     if temp_tag:
