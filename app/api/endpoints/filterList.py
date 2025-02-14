@@ -12,7 +12,7 @@ from app.model.news_detail import NewsDetail
 from app.tools.tools import filter_lock_task,numpy_to_bytes
 from loguru import logger
 from sqlmodel import Session, select, update, func, or_
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import requests
 import os
@@ -82,9 +82,12 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         if country is not None:
             filters.append(ListTask.country == country)
         if publishdate is not None:
-            filters.append(ListTask.publishdate == publishdate)
+            start_date = datetime.strptime(publishdate, "%Y-%m-%d").date()
+            end_date = start_date + timedelta(days=1)
+            filters.append(ListTask.update_time >= start_date)
+            filters.append(ListTask.update_time < end_date)
         if keyword is not None:
-            filters.append(ListTask.keyword == keyword)
+            filters.append(ListTask.title.like(f"%{keyword}%"))
         if status is not None:
             filters.append(ListTask.status == status)
         if tag is not None:
@@ -92,31 +95,35 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)
+        return return_format_json
     
     try:
         # 筛选条件
         if filters:
             statement = statement.where(*filters)
-        
+            
         statement = statement.offset(offset).limit(num)
-        # 过滤  w2tLJ9CcLXuAqDn4
-        results = db.exec(statement)
+        count_statement = select(func.count(ListTask.id)).where(*filters) if filters else select(func.count(ListTask.id))
         
+        # 过滤
+        results = db.exec(statement).all()
+        total_count = db.exec(count_statement).one()
+
         for temp_data in results:
             temp_title = temp_data.title
             temp_link = temp_data.link
             temp_country = temp_data.country
-            
             temp_result = {
                 "title": temp_title,
                 "link": temp_link,
                 "country": temp_country,
-                "state": state if state else ""
+                "state": state if state else "",
             }
 
             return_format_json["data"].append(temp_result)
             return_format_json["num"] += 1
         return_format_json["msg"] = "成功!"
+        return_format_json["total_num"] = total_count
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
