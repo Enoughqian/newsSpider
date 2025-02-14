@@ -44,7 +44,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
     # 主题在回调后田间到列表库中添加后面加
     try:
-        page = rs.get("page")
+        page = rs.get("page",1)
         num = rs.get("num")
     except:
         return_format_json["err_code"] = err_code
@@ -53,7 +53,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     
     # 取数据
     country = rs.get("country", None)
-    publishdate = rs.get("publishdate", None)
+    updatedate = rs.get("updatedate", None)
     keyword = rs.get("keyword",None)
     state = rs.get("state", None)
     offset = (page - 1) * num
@@ -81,8 +81,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         # 过滤条件
         if country is not None:
             filters.append(ListTask.country == country)
-        if publishdate is not None:
-            start_date = datetime.strptime(publishdate, "%Y-%m-%d").date()
+        if updatedate is not None:
+            start_date = datetime.strptime(updatedate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
             filters.append(ListTask.update_time >= start_date)
             filters.append(ListTask.update_time < end_date)
@@ -124,6 +124,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             return_format_json["num"] += 1
         return_format_json["msg"] = "成功!"
         return_format_json["total_num"] = total_count
+        return_format_json["total_page"] = int(total_count/20) + 1
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
