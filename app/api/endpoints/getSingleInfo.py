@@ -38,7 +38,8 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
         return_format_json["msg"] = "输入格式错误"
         return return_format_json
 
-    try:
+    # try:
+    if True
         # 查询
         smt = select(
             NewsDetail.id,
@@ -72,7 +73,7 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
         else:
             return_format_json["msg"] = "不存在!"
             return_format_json["err_code"] = 2
-    except:
-        return_format_json["msg"] = "获取失败!"
-        return_format_json["err_code"] = 3
+    # except:
+    #     return_format_json["msg"] = "获取失败!"
+    #     return_format_json["err_code"] = 3
     return return_format_json
