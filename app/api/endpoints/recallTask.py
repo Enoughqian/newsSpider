@@ -79,8 +79,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         try:
             for temp in rs["data"]:
                 # 处理数据
-                # try:
-                if True:
+                try:
                     temp_id = int(temp["id"])
                     temp_tag = int(temp["tag"])
                     # 处理花费
@@ -98,10 +97,10 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                         db.add(exist_data)
                         db.commit()
                         success_num += 1
-                    # else:
-                    #     fail_num += 1
-                # except:
-                #     fail_num += 1
+                    else:
+                        fail_num += 1
+                except:
+                    fail_num += 1
             return_format_json["success_num"] = success_num
             return_format_json["fail_num"] = fail_num
         except Exception as e:
