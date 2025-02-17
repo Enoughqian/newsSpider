@@ -68,4 +68,5 @@ desktop.ini
 .mypy_cache/
 
 # 自定义忽略
-# 请在此添加你希望忽略的其他文件或文件夹
+.env.testing
+.env.release
