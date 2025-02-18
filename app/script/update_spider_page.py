@@ -68,7 +68,7 @@ def get_task_from_db(max_num=50):
                     "extract_page_params": json.loads(exist_one.extract_page_params),
                     "country": temp_country
                 }
-                print(temp_params)
+                # print(temp_params)
                 all_params.append(temp_params)
                 index += 1
                 if index >= max_num:
