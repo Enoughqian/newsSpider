@@ -28,16 +28,6 @@ def fetch_news(params):
         st.error("请求失败，请稍后重试。")
         return pd.DataFrame(), 0, 0
 
-# 查询单条数据
-def fetch_info(unique_id):
-    url = "http://{}:{}/news_server/api/getSingleInfo".format(
-        settings.SERVER_HOST,
-        settings.SERVER_PORT
-    )
-    
-    response = requests.get(url+"?unique_id={}".format(unique_id))
-    data = response.json()["info"]
-    return data
 
 # 展示详情处理
 def exchange_dataframe(data, columns):
