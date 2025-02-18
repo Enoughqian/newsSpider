@@ -84,6 +84,13 @@ def extract(data):
                     exist_data.update_time = datetime.now()
                 else:
                     # 新建model赋值
+                    '''
+                    country_state: str
+                    extract_country: int
+                    feature_state: int
+                    feature: bytes
+                    cost: float
+                    '''
                     exist_data = NewsDetail()
                     exist_data.unique_id = unique_id
                     exist_data.platform_id = platform_id
@@ -101,7 +108,9 @@ def extract(data):
                     exist_data.classify = ""
                     exist_data.keyword_state = 0
                     exist_data.keyword = ""
-                    exist_data.vec_state = 0
+                    exist_data.feature_state = 0
+                    exist_data.country_state = 0
+                    exist_data.extract_country = ""
                     exist_data.update_time = datetime.now()
                 # 全部提交
                 db.add(exist_data)
