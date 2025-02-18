@@ -41,7 +41,8 @@ def get_task_from_db(max_num=50):
         )
         exist_basic = db.exec(smt).all()
         logger.info("数量: "+ str(len(exist_basic)))
-        for temp_basic in exist_basic[:max_num]:
+        index = 0
+        for temp_basic in exist_basic:
             # 查询模板编号
             temp_link = temp_basic.link
             temp_id = temp_basic.id
@@ -69,6 +70,9 @@ def get_task_from_db(max_num=50):
                 }
                 print(temp_params)
                 all_params.append(temp_params)
+                index += 1
+                if index >= max_num:
+                    break
 
     tasks = []
     for param in all_params:
