@@ -38,5 +38,8 @@ class Config(BaseSettings):
     # 服务
     SERVER_HOST: str = os.getenv("SERVER_HOST")
     SERVER_PORT: str = os.getenv("SERVER_PORT")
+
+    # 详情页
+    DETAIL_PAGE: str = os.getenv("DETAIL_PAGE")
     
 settings = Config()
