@@ -9,6 +9,7 @@ class NewsDetail(SQLModel, table=True):
     unique_id: int = Field(primary_key=True)
     platform_id: str
     title: str
+    title_translate: str
     link: str
     content: str
     pic_set: str

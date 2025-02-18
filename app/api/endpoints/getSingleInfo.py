@@ -55,8 +55,8 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
         ).where(
             NewsDetail.unique_id == unique_id
         )
-        temp_data = db.exec(smt).one_or_none()
-        if temp_data:
+        temp = db.exec(smt).one_or_none()
+        if temp:
             return_format_json["info"] = {
                 "id": temp.unique_id,
                 "title": temp.title if temp.title else "",
