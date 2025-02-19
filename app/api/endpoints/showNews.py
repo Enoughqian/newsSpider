@@ -35,7 +35,8 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
     )
     data = db.exec(smt).one_or_none()
     if data:
-        return Response(content=data.content, media_type="text/plain")
+        content = data.content
+        return Response(content=content, media_type="text/plain")
     else:
         return ""
 
