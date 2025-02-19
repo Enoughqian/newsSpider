@@ -29,7 +29,7 @@ from urllib.parse import urlparse
         }
     }
 '''
-def get_task_from_db(max_num=50):
+def get_task_from_db(max_num=10):
     all_params = []
     with Session(engine, autoflush=False) as db:
         # status: 2是待下载；1是下载完成；0是下载失败
@@ -71,11 +71,13 @@ def get_task_from_db(max_num=50):
                 # print(temp_params)
                 all_params.append(temp_params)
                 index += 1
-                if index >= max_num:
+                if index == max_num:
                     break
 
     tasks = []
     for param in all_params:
+        print(param)
+        print("================")
         taskA = spider_page.s(param)
         taskB = extract_page.s()
         tasks.append(chain(taskA, taskB))

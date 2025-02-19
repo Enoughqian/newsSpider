@@ -113,22 +113,22 @@ if __name__ == "__main__":
     # print(result_all)
 
 
-    # spider_pjsget
-    data = {
-        "platform_id": "1002",
-        "link": "https://www.middleeastmonitor.com/category/news-2/page/1/",
-        "spider_list_func": "spider_pjsget",
-        "extract_list_func": "extract_list_html",
-        "extract_list_params": {
-            "link":"//ul[@class='memo-four-col-grid']/li/div/div/h2/a/@href",
-            "title":"//ul[@class='memo-four-col-grid']/li/div/div/h2/a/text()",
-            "institution":"//x",
-            "country":"//x"
-        }
-    }
-    result = spider_list(data)
-    result_all = extract_list(result)
-    print(result_all)
+    # # spider_pjsget
+    # data = {
+    #     "platform_id": "1002",
+    #     "link": "https://www.middleeastmonitor.com/category/news-2/page/1/",
+    #     "spider_list_func": "spider_pjsget",
+    #     "extract_list_func": "extract_list_html",
+    #     "extract_list_params": {
+    #         "link":"//ul[@class='memo-four-col-grid']/li/div/div/h2/a/@href",
+    #         "title":"//ul[@class='memo-four-col-grid']/li/div/div/h2/a/text()",
+    #         "institution":"//x",
+    #         "country":"//x"
+    #     }
+    # }
+    # result = spider_list(data)
+    # result_all = extract_list(result)
+    # print(result_all)
 
     # data = {
     #     "id": 12929,
@@ -150,3 +150,24 @@ if __name__ == "__main__":
     #     f.write(result["data"])
     # result = extract_page(result)
     # print(result)
+
+    data = {
+        "id": 15410,
+        "platform_id": "1002",
+        "title": "Turkiye places 'great importance' on ties with eastern, southern Africa: Envoy",
+        "link": "https://www.middleeastmonitor.com/20250210-turkiye-places-great-importance-on-ties-with-eastern-southern-africa-envoy-2/",
+        "spider_page_func": "spider_pjsget",
+        "extract_page_func": "extract_page_html",
+        "extract_page_params": {
+            "content": "//div[@class='memo-single-news-content 0']/p/text()",
+            "pic_set": "//div[@class='col-sm-12 swift-in-viewport']/div/img/@src",
+            "publish_date": "//div[@class='memo-news-date swift-in-viewport']/p/text()"
+        },
+        "date_type": 3
+    }
+    
+    result = spider_page(data)
+    with open("demo.html","w") as f:
+        f.write(result["data"])
+    result = extract_page(result)
+    print(result)

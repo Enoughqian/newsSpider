@@ -75,6 +75,11 @@ def extract(data):
             # 处理日期信息
             publish_date = exchange_date("".join(result[2]).strip(), date_type)
 
+            print(content)
+            print(pic_set)
+            print(publish_date)
+            print("=============")
+
             # 数据入库
             with Session(engine, autoflush=False) as db:
                 smt = select(NewsDetail).where(NewsDetail.unique_id == unique_id)
