@@ -11,6 +11,7 @@ class FormalNews(SQLModel, table=True):
     web_name: str
     domain: str
     title: str
+    title_translate: str
     publish_date: datetime
     link: str
     content: str

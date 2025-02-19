@@ -9,6 +9,7 @@ from app.config.env_config import settings
 from app.config.log_init import log_init_simple
 from app.model.list_task import ListTask
 from app.model.news_detail import NewsDetail
+from app.model.platform_info import PlatformInfo
 from app.model.formal_news import FormalNews
 from app.tools.tools import filter_lock_task,numpy_to_bytes,bytes_to_numpy
 from loguru import logger
@@ -102,7 +103,61 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             else:
                 return_format_json["msg"] = "数据没找到!"
                 return_format_json["err_code"] = 4
+            # 查询其他表信息，提交到formal_news表
+            temp_id = unique_id
+            temp_platform_id = temp_data.platform_id
+            temp_title = temp_data.title
+            temp_title_translate = temp_data.title_translate
+            temp_link = temp_data.link
+            temp_content = temp_data.content
+            temp_pic_set = temp_data.pic_set
+            temp_publish_date = temp_data.publish_date
+            temp_abstract = temp_data.abstract
+            temp_translate = temp_data.translate
+            temp_classify = temp_data.classify
+            temp_keyword = temp_data.keyword
+            temp_extract_country = temp_data.extract_country
+            
+            smt = select(
+                PlatformInfo.domain,
+                PlatformInfo.web_name
+            ).where(
+                PlatformInfo.platform_id == temp_platform_id
+            )
+
+            temp_platform_data = db.exec(smt).one_or_none()
+            temp_platform_web_name = temp_platform_data.web_name
+            temp_platform_domain = temp_platform_data.domain
+
+            # 入库
+            smt = select(
+                FormalNews
+            ).where(
+                FormalNews.id == temp_id
+            )
+            temp_data = db.exec(smt).one_or_none()
+            if not temp_data:
+                temp_data = FormalNews()
+            temp_data.id = temp_id
+            temp_data.web_name = temp_platform_web_name
+            temp_data.domain = temp_platform_domain
+            temp_data.title = temp_title
+            temp_data.title_translate = temp_title_translate
+            temp_data.publish_date = temp_publish_date
+            temp_data.link = temp_link
+            temp_data.content = temp_content
+            temp_data.pic_set = temp_pic_set
+            temp_data.abstract = temp_abstract
+            temp_data.translate = temp_translate
+            temp_data.classify = temp_classify
+            temp_data.keyword = temp_keyword
+            temp_data.extract_country = temp_extract_country
+            temp_data.update_time = datetime.now()
+            
+            db.add(temp_data)
+            db.commit()
+
     except:
-        return_format_json["msg"] = "获取失败!"
+        return_format_json["msg"] = "处理失败!"
         return_format_json["err_code"] = 6
     return return_format_json
