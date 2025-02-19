@@ -43,6 +43,7 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
         smt = select(
             NewsDetail.unique_id,
             NewsDetail.title,
+            NewsDetail.title_translate,
             NewsDetail.link,
             NewsDetail.content,
             NewsDetail.pic_set,
@@ -60,6 +61,7 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
             return_format_json["info"] = {
                 "id": temp.unique_id,
                 "title": temp.title if temp.title else "",
+                "title_translate": temp.title_translate if temp.title_translate else "",
                 "link": temp.link if temp.link else "",
                 "publish_date": temp.publish_date if temp.publish_date else "",
                 "content": temp.content if temp.content else "",

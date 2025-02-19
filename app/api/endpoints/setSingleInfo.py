@@ -126,6 +126,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             )
 
             temp_platform_data = db.exec(smt).one_or_none()
+            temp_platform_id = temp_platform_data.platform_id
             temp_platform_web_name = temp_platform_data.web_name
             temp_platform_domain = temp_platform_data.domain
 
@@ -139,6 +140,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             if not temp_data:
                 temp_data = FormalNews()
             temp_data.id = temp_id
+            temp_data.platform_id = temp_platform_id
             temp_data.web_name = temp_platform_web_name
             temp_data.domain = temp_platform_domain
             temp_data.title = temp_title
