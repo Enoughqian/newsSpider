@@ -65,7 +65,6 @@ def spider(data):
         state["info"] = "文本长度过短"
     
     state["data"] = response_text
-    print(state)
     return state
 
 
