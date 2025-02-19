@@ -120,7 +120,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             
             smt = select(
                 PlatformInfo.domain,
-                PlatformInfo.web_name
+                PlatformInfo.web_name,
+                PlatformInfo.platform_id
             ).where(
                 PlatformInfo.platform_id == temp_platform_id
             )
