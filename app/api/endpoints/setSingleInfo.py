@@ -61,16 +61,17 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
     try:
         # 编辑单条的处理
+        smt = select(
+            NewsDetail
+        ).where(
+            NewsDetail.unique_id == unique_id
+        )
+        temp_data = db.exec(smt).one_or_none()
         if len(data) == 1:
             # 获取处理项目
             target_key = list(data.keys())[0]
             target_content = list(data.values())[0]
-            smt = select(
-                NewsDetail
-            ).where(
-                NewsDetail.unique_id == unique_id
-            )
-            temp_data = db.exec(smt).one_or_none()
+            
             if temp_data:
                 if target_key == "abstract":
                     temp_data.abstract = target_content
