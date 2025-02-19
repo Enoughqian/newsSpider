@@ -42,7 +42,7 @@ def extract(data):
                 result[i] = result[i].apply(lambda x: x if x != "None" else "")
             # 拼接url
             result["链接"] = result["链接"].apply(lambda x: x if "http" in x else urljoin(domain, x))
-
+            print(result)
             with Session(engine, autoflush=False) as db:
                 insert_list = []
                 for item in result.values:
@@ -63,6 +63,7 @@ def extract(data):
                         exist_data.status = 2
                         exist_data.update_time = datetime.now()
                     insert_list.append(exist_data)
+                print(len(insert_list))
                 # 全部提交
                 db.add_all(insert_list)
                 db.commit()
