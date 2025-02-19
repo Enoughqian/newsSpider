@@ -10,6 +10,7 @@ from app.config.env_config import settings
 from app.config.log_init import log_init_simple
 from app.model.list_task import ListTask
 from app.model.formal_news import FormalNews
+from app.model.news_detail import NewsDetail
 from app.tools.tools import filter_lock_task,numpy_to_bytes
 from loguru import logger
 from sqlmodel import Session, select, update, func, or_
@@ -25,16 +26,16 @@ router = APIRouter(prefix="/showNews")
 
 # 接口连接
 @router.get("")  
-async def endpoint(id, response_class=PlainTextResponse,db: Session = Depends(deps.get_db), ):
+async def endpoint(id, db: Session = Depends(deps.get_db), ):
     # 获取文本信息
     smt = select(
-        FormalNews
+        NewsDetail
     ).where(
-        FormalNews.id == id
+        NewsDetail.unique_id == str(id)
     )
     data = db.exec(smt).one_or_none()
     if data:
-        return str(data.content)
+        return Response(content=data.content, media_type="text/plain")
     else:
         return ""
 
