@@ -41,6 +41,8 @@ def get_task_from_db():
                     all_params.append(temp_single_params)
     tasks = []
     for param in all_params:
+        print(param)
+        print("================")
         taskA = spider_list.s(param)
         taskB = extract_list.s()
         tasks.append(chain(taskA, taskB))
