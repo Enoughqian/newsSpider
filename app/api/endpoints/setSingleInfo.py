@@ -38,7 +38,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     try:
         unique_id = int(rs["id"])
         # 包含两种: 编辑和推送
-        data = str(rs.get("data"))
+        data = rs.get("data",{})
     except:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = "输入格式错误"
@@ -50,7 +50,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_content = str(data[temp_key]).strip()
             if not len(temp_content):
                 state = 0
-        if not state:
+        if state == 0 or len(data) == 0:
             return_format_json["err_code"] = 2
             return_format_json["msg"] = "输入内容存在空"
             return return_format_json
