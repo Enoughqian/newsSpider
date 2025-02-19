@@ -31,6 +31,7 @@ def extract(data):
     date_type = int(data.get("date_type"))
 
     # 根据配置解析
+    # 2是未处理,1是处理完,0是处理失败
     if not data["err_code"]:
         try:
             # 文章原始信息表入库
@@ -127,15 +128,15 @@ def extract(data):
         final_status = 0
     
     # 更改列表爬虫状态为
-    if final_status:
-        with Session(engine, autoflush=False) as db:
-            smt = select(ListTask).where(ListTask.id == unique_id)
-            exist_data = db.exec(smt).one_or_none()
-            if exist_data:
-                exist_data.status = final_status
-                # 全部提交
-                db.add(exist_data)
-                db.commit()
+    with Session(engine, autoflush=False) as db:
+        smt = select(ListTask).where(ListTask.id == unique_id)
+        exist_data = db.exec(smt).one_or_none()
+        if exist_data:
+            exist_data.status = final_status
+            # 全部提交
+            db.add(exist_data)
+            db.commit()
+            
 
 if __name__ == "__main__":
     pass
