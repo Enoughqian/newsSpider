@@ -65,7 +65,7 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
     '''
     if taskname == "recTitle":
         # 查表取出状态为0的, 不输入参数的情况下, 默认一次返回10条
-        smt = select(ListTask.id, ListTask.title).where(ListTask.tag == 2)
+        smt = select(ListTask.id, ListTask.title).where(ListTask.tag == 2).order_by(ListTask.update_time.desc())
         exist_data = db.exec(smt).fetchall()
 
         try:
