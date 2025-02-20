@@ -96,15 +96,15 @@ async def endpoint(taskname, num = 10, limit_time = 5, db: Session = Depends(dep
     if taskname in ["genAbstract","genTranslate","genClassify","recCountry", "genVec"]:
         # 查表取出状态为0的, 不输入参数的情况下, 默认一次返回10条
         if taskname == "genAbstract":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 0)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.abstract_state == 0).order_by(NewsDetail.update_time.desc())
         elif taskname == "genTranslate":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 0)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.translate_state == 0).order_by(NewsDetail.update_time.desc())
         elif taskname == "genClassify":
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 0)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.classify_state == 0).order_by(NewsDetail.update_time.desc())
         elif taskname == "genVec":
-            smt = select(NewsDetail.unique_id, NewsDetail.title).where(NewsDetail.feature_state == 0)
+            smt = select(NewsDetail.unique_id, NewsDetail.title).where(NewsDetail.feature_state == 0).order_by(NewsDetail.update_time.desc())
         else:
-            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.country_state == 0)
+            smt = select(NewsDetail.unique_id, NewsDetail.content).where(NewsDetail.country_state == 0).order_by(NewsDetail.update_time.desc())
 
         exist_data = db.exec(smt).fetchall()
 
