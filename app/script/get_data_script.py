@@ -27,6 +27,7 @@ def get_data_from_db():
                 title = temp.title
                 link = temp.link
                 content = temp.content
+                abstract = temp.abstract
                 # 配置表信息
                 publish_date = temp.publish_date
                 pic_set = temp.pic_set
@@ -37,6 +38,7 @@ def get_data_from_db():
                     "origin_link": link,
                     "content": content,
                     "publish_date": publish_date,
+                    "abstract": abstract,
                     "pic_set": pic_set
                 }
                 all_params.append(temp)
