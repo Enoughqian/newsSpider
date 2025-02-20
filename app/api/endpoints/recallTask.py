@@ -76,12 +76,10 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     success_num = 0
     fail_num = 0
     if taskname == "recTitle":
-        # try:
-        if True:
+        try:
             for temp in rs["data"]:
                 # 处理数据
-                # try:
-                if True:
+                try:
                     temp_id = int(temp["id"])
                     temp_tag = int(temp["tag"])
                     # 处理花费
@@ -101,13 +99,13 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                         success_num += 1
                     else:
                         fail_num += 1
-                # except:
-                #     fail_num += 1
+                except:
+                    fail_num += 1
             return_format_json["success_num"] = success_num
             return_format_json["fail_num"] = fail_num
-        # except Exception as e:
-        #     return_format_json["err_code"] = 202
-        #     return_format_json["msg"] = str(e)
+        except Exception as e:
+            return_format_json["err_code"] = 202
+            return_format_json["msg"] = str(e)
     elif taskname in ["genAbstract", "genTranslate", "genClassify", "genKeyword", "recCountry","genVec"]:
         for temp in rs["data"]:
             try:
