@@ -118,6 +118,7 @@ def extract(data):
                     exist_data.country_state = 0
                     exist_data.extract_country = ""
                     exist_data.update_time = datetime.now()
+                    exist_data.cost = 0
                 # 全部提交
                 db.add(exist_data)
                 db.commit()
