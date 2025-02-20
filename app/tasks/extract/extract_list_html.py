@@ -62,6 +62,8 @@ def extract(data):
                         exist_data.tag = 2
                         exist_data.status = 2
                         exist_data.update_time = datetime.now()
+                        exist_data.cost = 0
+
                     insert_list.append(exist_data)
                 print(len(insert_list))
                 # 全部提交
