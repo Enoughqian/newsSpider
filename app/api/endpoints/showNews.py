@@ -24,13 +24,16 @@ import re
 router = APIRouter(prefix="/showNews")
 
 def custom_line_break(text):
-    # 使用正则表达式进行替换
+    # 使用正则表达式进行替换，匹配不在数字前后的句点
     pattern = r'(?<!\d)\.(?!\d)'
     
     # 将匹配到的句点替换为换行符
     result = re.sub(pattern, '.\n', text)
     
-    return result
+    # 添加缩进
+    indented_result = '\n'.join(['  ' + line.strip() for line in result.splitlines()])
+    
+    return indented_result
 
 # 接口连接
 @router.get("")  
