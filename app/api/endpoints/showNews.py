@@ -21,8 +21,16 @@ import os
 import pandas as pd
 import re
 
-
 router = APIRouter(prefix="/showNews")
+
+def custom_line_break(text):
+    # 使用正则表达式进行替换
+    pattern = r'(?<!\d)\.(?!\d)'
+    
+    # 将匹配到的句点替换为换行符
+    result = re.sub(pattern, '.\n', text)
+    
+    return result
 
 # 接口连接
 @router.get("")  
@@ -36,6 +44,7 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
     data = db.exec(smt).one_or_none()
     if data:
         content = data.content
+        content = custom_line_break(content)
         return Response(content=content, media_type="text/plain")
     else:
         return ""
