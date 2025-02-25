@@ -1,7 +1,6 @@
 import streamlit as st
 from page.news_list import news_list
 from page.login import get_all_info
-from page.news_list import fetch_info
 from app.config.env_config import settings
 from streamlit_cookies_manager import EncryptedCookieManager
 

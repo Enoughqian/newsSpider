@@ -54,9 +54,7 @@ def exchange_dataframe(data, columns):
         temp_country = i[2]
         temp_state = i[3]
 
-        # temp_id = '<a href="http://{}:{}/news_server/api/getSingleInfo?unique_id={}" target="_blank"> {}</a>'.format(settings.SERVER_HOST,settings.SERVER_PORT,temp_id, temp_id)
-        # temp_id = '<a href="http://{}:{}/news_server/api/getSingleInfo?unique_id={}" target="_blank"> {}</a>'.format(settings.SERVER_HOST,settings.SERVER_PORT,temp_id, temp_id)
-        temp_id = f'<a href="{settings.DETAIL_PAGE}?unique_id={temp_id}" target="_blank"> {temp_id}</a>'
+        temp_id = f'<a href="http://{settings.SERVER_SHOW_DETAIL_HOST}:{settings.SERVER_SHOW_DETAIL_PORT}?unique_id={temp_id}" target="_blank"> {temp_id}</a>'
         
         html += f"<tr><td>{temp_id}</td><td>{temp_title}</td><td>{temp_country}</td><td>{temp_state}</td></tr>"
     html += "</tbody></table>"
