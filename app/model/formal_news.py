@@ -18,6 +18,7 @@ class FormalNews(SQLModel, table=True):
     pic_set: str    
     abstract: str
     translate: str
+    main_classify: str
     classify: str
     keyword: str
     extract_country: int

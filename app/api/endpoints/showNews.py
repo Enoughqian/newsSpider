@@ -36,8 +36,9 @@ def custom_line_break(text):
     return indented_result
 
 # 接口连接
-@router.get("")  
+@router.get("", response_class=HTMLResponse)
 async def endpoint(id, db: Session = Depends(deps.get_db), ):
+    
     # 获取文本信息
     smt = select(
         NewsDetail
@@ -47,10 +48,32 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
     data = db.exec(smt).one_or_none()
     if data:
         content = data.content
+        title = data.title
+        pic_set = data.pic_set
         content = custom_line_break(content)
-        return Response(content=content, media_type="text/plain")
+        
+        # 读取模版html
+        file_path = "app/config/mode_html.html"
+        with open(file_path, "r") as f:
+            page_content = f.read()
+
+        # 展示内容
+        if not pic_set:
+            page_content = "\n".join([i for i in page_content.split("\n") if "PIC_URL" not in i])
+        
+        # 数据组合
+        page_content = page_content.replace("TITLE", title)
+        page_content = page_content.replace("PIC_URL", pic_set)
+        page_content = page_content.replace("CONTENT", content)
+
+        return HTMLResponse(content=page_content)
     else:
-        return ""
+        # 读取模版html
+        file_path = "app/config/mode_html_none.html"
+        with open(file_path, "r") as f:
+            page_content = f.read()
+
+        return HTMLResponse(content=page_content)
 
 
 

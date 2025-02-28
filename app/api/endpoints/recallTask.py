@@ -161,8 +161,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     try:
                         temp_content = numpy_to_bytes(temp_content)
                     except:
-                        continue
                         fail_num += 1
+                        continue
 
                     exist_data = db.exec(smt).one_or_none()
                     # 列表类型处理
@@ -182,6 +182,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
                         exist_data.classify = ";".join([str(mm) for mm in temp_content])
+                        exist_data.main_classify = ";".join([str(mm).split("-")[0] for mm in temp_content])
                         exist_data.cost += temp_cost
                         exist_data.classify_state = 1
                     else:

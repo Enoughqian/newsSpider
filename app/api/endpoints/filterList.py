@@ -47,7 +47,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         page = rs.get("page",1)
         num = rs.get("num")
     except:
-        return_format_json["err_code"] = err_code
+        return_format_json["err_code"] = 3
         return_format_json["msg"] = "输入页面参数错误"
         return return_format_json
     

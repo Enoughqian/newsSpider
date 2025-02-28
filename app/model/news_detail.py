@@ -21,6 +21,7 @@ class NewsDetail(SQLModel, table=True):
     translate: str
     classify_state: int
     classify: str
+    main_classify: str
     keyword_state: int
     keyword: str
     country_state: str

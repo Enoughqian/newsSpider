@@ -115,6 +115,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_abstract = temp_data.abstract
             temp_translate = temp_data.translate
             temp_classify = temp_data.classify
+            temp_main_classify = temp_data.main_classify
             temp_keyword = temp_data.keyword
             temp_extract_country = temp_data.extract_country
             
@@ -153,6 +154,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_data.abstract = temp_abstract
             temp_data.translate = temp_translate
             temp_data.classify = temp_classify
+            temp_data.main_classify = temp_main_classify
             temp_data.keyword = temp_keyword
             temp_data.extract_country = temp_extract_country
             temp_data.update_time = datetime.now()
