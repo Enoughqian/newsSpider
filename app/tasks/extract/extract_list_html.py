@@ -50,7 +50,7 @@ def extract(data):
                     smt = select(ListTask).where(ListTask.link == temp_link)
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
-                        exist_data.update_time = datetime.now()
+                        continue
                     else:
                         # 新建model赋值
                         exist_data = ListTask()
