@@ -3,6 +3,8 @@ import pandas as pd
 from datetime import datetime
 import requests
 from app.config.env_config import settings
+from PIL import Image
+import io
 
 import warnings
 # 忽略特定的警告
