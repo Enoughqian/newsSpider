@@ -4,6 +4,10 @@ from page.login import get_all_info
 from page.upload_page import upload_page
 from app.config.env_config import settings
 from streamlit_cookies_manager import EncryptedCookieManager
+import warnings
+
+# 忽略特定的警告
+warnings.filterwarnings("ignore")
 
 # 创建一个加密的 Cookie Manager
 cookies = EncryptedCookieManager(

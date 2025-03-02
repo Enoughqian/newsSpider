@@ -4,6 +4,11 @@ from datetime import datetime
 import requests
 from app.config.env_config import settings
 
+import warnings
+# 忽略特定的警告
+warnings.filterwarnings("ignore")
+
+
 def fetch_news(params):
     url = "http://{}:{}/news_server/api/filterList".format(
         settings.SERVER_HOST,
@@ -61,10 +66,8 @@ def exchange_dataframe(data, columns):
     return html
 
 def news_list():
-    st.title("新闻列表")
-
     # 创建筛选选项
-    st.header("筛选条件")
+    st.markdown("<h1 style='font-size: 30px;'>筛选条件</h1>", unsafe_allow_html=True)
 
     # 状态筛选
     state_filter = st.selectbox(
