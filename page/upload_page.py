@@ -109,36 +109,46 @@ def upload_page():
 
             st.header("军事")
             with st.expander("点击展开军事新闻", expanded=False):
-                for idx, item in enumerate(filtered_data_2):
-                    if st.button(f'移动 {item} 到模板', key=f'btn_right_2_{idx}'):
-                        move_to_right(item, 2)
-                        st.session_state.left_data_2.remove(item)
-                        st.success(f'已将 {item} 移动到模板')
+                for temp in st.session_state.left_data_2:
+                    temp_index = temp["id"]
+                    temp_title = temp["title"]
+
+                    if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_2_{str(temp_index)}'):
+                        move_to_right(temp, 2)
+                        st.session_state.left_data_2.remove(temp)
+                        st.success(f'已将 {temp_index} 移动到模板')
 
             st.header("社会")
             with st.expander("点击展开社会新闻", expanded=False):
-                for idx, item in enumerate(filtered_data_3):
-                    if st.button(f'移动 {item} 到模板', key=f'btn_right_3_{idx}'):
-                        move_to_right(item, 3)
-                        st.session_state.left_data_3.remove(item)
-                        st.success(f'已将 {item} 移动到模板')
+                for temp in st.session_state.left_data_3:
+                    temp_index = temp["id"]
+                    temp_title = temp["title"]
+
+                    if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_3_{str(temp_index)}'):
+                        move_to_right(temp, 3)
+                        st.session_state.left_data_3.remove(temp)
+                        st.success(f'已将 {temp_index} 移动到模板')
             
             st.header("经济")
             with st.expander("点击展开经济新闻", expanded=False):
-                for idx, item in enumerate(filtered_data_4):
-                    if st.button(f'移动 {item} 到模板', key=f'btn_right_4_{idx}'):
-                        move_to_right(item, 4)
-                        st.session_state.left_data_4.remove(item)
-                        st.success(f'已将 {item} 移动到模板')
+                for temp in st.session_state.left_data_4:
+                    temp_index = temp["id"]
+                    temp_title = temp["title"]
+
+                    if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_4_{str(temp_index)}'):
+                        move_to_right(temp, 4)
+                        st.session_state.left_data_4.remove(temp)
+                        st.success(f'已将 {temp_index} 移动到模板')
 
         with col2:
             st.header("模板")
+            st.write("待生成模板新闻:\n")
             # 显示当前右边方框的数据
             if st.button('删除模板最后一条数据', key='btn_delete_last'):
                 undo_last_right()  # 删除右边最后一条数据
                 st.rerun()
 
             if st.session_state.right_data:
-                st.write("待生成模板新闻:", [str(data[0]["id"]) + " " + data[0]["title"] for data in st.session_state.right_data])
+                st.write("\n".join([str(data[0]["id"]) + " " + data[0]["title"]+"\n" for data in st.session_state.right_data]))
             else:
                 st.write("模板没有新闻")
