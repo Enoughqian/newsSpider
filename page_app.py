@@ -1,6 +1,7 @@
 import streamlit as st
 from page.news_list import news_list
 from page.login import get_all_info
+from page.upload_page import upload_page
 from app.config.env_config import settings
 from streamlit_cookies_manager import EncryptedCookieManager
 
@@ -36,13 +37,16 @@ def main():
         login()
     else:
         st.sidebar.title("导航")
-        options = st.sidebar.radio("选择功能", ("统计信息", "新闻列表"))
+        options = st.sidebar.radio("选择功能", ("新闻列表", "上传生成页"))
 
         if options == "统计信息":
             st.warning("初始页面")
         elif options == "新闻列表":
             st.title("列表页")
             news_list()
+        elif options == "上传生成页":
+            st.title("上传页")
+            upload_page()
 
 # 运行主程序
 if __name__ == "__main__":
