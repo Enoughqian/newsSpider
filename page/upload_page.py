@@ -175,7 +175,7 @@ def upload_page():
             if uploaded_file is not None:
                 # 读取并展示图片
                 image = Image.open(uploaded_file)
-                st.image(image, caption='上传的图片', use_column_width=True)
+                st.image(image, caption='上传的图片', use_container_width =True)
 
                 # 确定按钮
                 if st.button("确定提交"):
