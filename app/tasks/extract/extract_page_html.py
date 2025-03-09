@@ -87,7 +87,8 @@ def extract(data):
                 exist_data = db.exec(smt).one_or_none()
 
                 if exist_data:
-                    exist_data.update_time = datetime.now()
+                    # exist_data.update_time = datetime.now()
+                    pass
                 else:
                     # 新建model赋值
                     '''
@@ -112,6 +113,7 @@ def extract(data):
                     exist_data.translate = ""
                     exist_data.classify_state = 0
                     exist_data.classify = ""
+                    exist_data.main_classify = ""
                     exist_data.keyword_state = 0
                     exist_data.keyword = ""
                     exist_data.feature_state = 0

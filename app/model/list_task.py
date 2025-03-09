@@ -15,4 +15,5 @@ class ListTask(SQLModel, table=True):
     tag: int
     status: int
     cost: float
+    classify: str
     update_time: datetime

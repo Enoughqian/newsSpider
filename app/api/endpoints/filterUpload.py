@@ -36,7 +36,7 @@ def expand_data(data):
     for i in data:     
         temp_title = i["title"]     
         temp_id = i["id"]     
-        temp_classify = i["main_classify"].split(";")     
+        temp_classify = i["main_classify"].split(";")[0]     
         for mm in temp_classify:         
             temp = {
                 "title": temp_title,
@@ -105,12 +105,12 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         final_result = []
         for temp_data in results:
             temp_id = temp_data.id
-            temp_title = temp_data.title
+            temp_t_title = temp_data.translate_title
             temp_main_classify = temp_data.main_classify
 
             temp_result = {
                 "id": temp_id,
-                "title": temp_title,
+                "title": temp_t_title,
                 "main_classify": temp_main_classify
             }
             final_result.append(temp_result)

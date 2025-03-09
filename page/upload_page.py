@@ -3,9 +3,10 @@ import pandas as pd
 from datetime import datetime
 import requests
 from app.config.env_config import settings
+from app.tools.upload_word import get_data_from_db, inner_upload, outter_upload
 from PIL import Image
 import io
-
+import time
 import warnings
 # 忽略特定的警告
 warnings.filterwarnings("ignore")
@@ -41,7 +42,6 @@ def undo_last_right():
             st.session_state.left_data_3.append(item)
         elif group == 4:
             st.session_state.left_data_4.append(item)
-        print(st.session_state.left_data_1)
 
 def upload_page():
     # 筛选框
@@ -56,6 +56,7 @@ def upload_page():
         st.session_state.left_data_4 = []
     if 'right_data' not in st.session_state:
         st.session_state.right_data = []
+    st.session_state.have_opt = 0
 
     st.markdown("<h1 style='font-size: 30px;'>筛选条件</h1>", unsafe_allow_html=True)
 
@@ -92,7 +93,7 @@ def upload_page():
             if 'right_data' not in st.session_state:
                 st.session_state.right_data = []
     
-    if len(st.session_state.left_data_1) or len(st.session_state.left_data_2) or len(st.session_state.left_data_3) or len(st.session_state.left_data_4):
+    if len(st.session_state.left_data_1) or len(st.session_state.left_data_2) or len(st.session_state.left_data_3) or len(st.session_state.left_data_4) or st.session_state.have_opt == 0:
         st.markdown("<h1 style='font-size: 30px;'>生成word文件排序调整</h1>", unsafe_allow_html=True)
 
         # 布局
@@ -106,6 +107,7 @@ def upload_page():
                     temp_title = temp["title"]
 
                     if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_1_{str(temp_index)}'):
+                        st.session_state.have_opt = 1
                         move_to_right(temp, 1)  # 记录原组
                         st.session_state.left_data_1.remove(temp)
                         st.success(f'已将 {temp_index} 移动到模板')
@@ -118,6 +120,7 @@ def upload_page():
                     temp_title = temp["title"]
 
                     if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_2_{str(temp_index)}'):
+                        st.session_state.have_opt = 1
                         move_to_right(temp, 2)
                         st.session_state.left_data_2.remove(temp)
                         st.success(f'已将 {temp_index} 移动到模板')
@@ -130,6 +133,7 @@ def upload_page():
                     temp_title = temp["title"]
 
                     if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_3_{str(temp_index)}'):
+                        st.session_state.have_opt = 1
                         move_to_right(temp, 3)
                         st.session_state.left_data_3.remove(temp)
                         st.success(f'已将 {temp_index} 移动到模板')
@@ -142,6 +146,7 @@ def upload_page():
                     temp_title = temp["title"]
 
                     if st.button(f'移动 {str(temp_index) + " " + str(temp_title)} 到模板', key=f'btn_right_4_{str(temp_index)}'):
+                        st.session_state.have_opt = 1
                         move_to_right(temp, 4)
                         st.session_state.left_data_4.remove(temp)
                         st.success(f'已将 {temp_index} 移动到模板')
@@ -164,8 +169,22 @@ def upload_page():
         template_option = st.selectbox("请选择模板类型", ["内网模板", "外网模板"])
         if template_option == "外网模板":
             # 显示外网模板相关的按钮
-            if st.button("外网模板操作"):
-                st.success("您选择了外网模板！")
+            if st.button("外网模板生成"):
+                have_select_data = [list(i)[0] for i in st.session_state.right_data]
+                have_select_id = [i["id"] for i in have_select_data]
+                select_data = get_data_from_db(have_select_id)
+                st.cache_data.clear()  # 自动清除缓存
+                bt_data, file_name = outter_upload(select_data)
+                st.success("处理完成!")
+
+                # 创建下载按钮
+                st.download_button(
+                    label="下载Word文件",
+                    data=bt_data,
+                    file_name=file_name,
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    key=f"download_word_button_{int(time.time())}"
+                )
 
         elif template_option == "内网模板":
             # 显示图片上传控件
@@ -183,8 +202,22 @@ def upload_page():
                     image_bytes = io.BytesIO()
                     image.save(image_bytes, format='PNG')
                     image_bytes.seek(0)  # 重置字节流的位置
-                    # 这里可以添加逻辑将图片上传到服务器或进行其他处理
-                    st.success("图片已成功提交！")
+                    # 查询+生成
+                    have_select_data = [list(i)[0] for i in st.session_state.right_data]
+                    have_select_id = [i["id"] for i in have_select_data]
+                    select_data = get_data_from_db(have_select_id)
+                    st.cache_data.clear()  # 自动清除缓存
+                    bt_data, file_name = inner_upload(select_data, image_bytes)
+                    st.success("处理完成!")
+
+                    # 创建下载按钮
+                    st.download_button(
+                        label="下载Word文件",
+                        data=bt_data,
+                        file_name=file_name,
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key=f"download_word_button_{int(time.time())}"
+                    )
 
             else:
                 st.info("请上传一张图片。")
