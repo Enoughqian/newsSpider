@@ -43,7 +43,7 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
     smt = select(
         FormalNews
     ).where(
-        FormalNews.unique_id == str(id)
+        FormalNews.id == str(id)
     )
     data = db.exec(smt).one_or_none()
     if data:
