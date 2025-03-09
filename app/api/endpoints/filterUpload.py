@@ -45,7 +45,6 @@ def expand_data(data):
                 "classify": mm
             }
             result.append(temp)
-    print(result)
     return result
 
 # 接口连接
@@ -122,7 +121,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
-    print(return_format_json)
     return return_format_json
 
 

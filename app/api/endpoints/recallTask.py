@@ -82,6 +82,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 try:
                     temp_id = int(temp["id"])
                     temp_tag = int(temp["tag"])
+                    temp_classify = str(temp["classify"])
                     # 处理花费
                     try:
                         temp_cost = float(temp["cost"])
@@ -92,6 +93,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
                         exist_data.tag = temp_tag
+                        exist_data.main_classify = temp_classify
                         exist_data.cost += temp_cost
                         exist_data.update_time = datetime.now()
                         db.add(exist_data)

@@ -54,7 +54,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     # 取数据
     country = rs.get("country", None)
     updatedate = rs.get("updatedate", None)
-    print(updatedate)
     keyword = rs.get("keyword",None)
     state = rs.get("state", None)
     offset = (page - 1) * num
@@ -85,8 +84,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         if updatedate is not None:
             start_date = datetime.strptime(updatedate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
-            print(start_date)
-            print(end_date)
             filters.append(ListTask.update_time >= start_date)
             filters.append(ListTask.update_time < end_date)
         if keyword is not None:
