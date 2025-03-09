@@ -165,4 +165,5 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except:
         return_format_json["msg"] = "处理失败!"
         return_format_json["err_code"] = 6
+    print(return_format_json)
     return return_format_json

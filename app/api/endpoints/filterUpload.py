@@ -36,7 +36,8 @@ def expand_data(data):
     for i in data:     
         temp_title = i["title"]     
         temp_id = i["id"]     
-        temp_classify = i["main_classify"].split(";")[0]     
+        temp_classify = i["main_classify"].split(";")   
+        temp_classify = [i for i in temp_classify if i in ["政治","军事","社会","经济"]]
         for mm in temp_classify:         
             temp = {
                 "title": temp_title,
@@ -44,6 +45,7 @@ def expand_data(data):
                 "classify": mm
             }
             result.append(temp)
+    print(result)
     return result
 
 # 接口连接
@@ -105,7 +107,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         final_result = []
         for temp_data in results:
             temp_id = temp_data.id
-            temp_t_title = temp_data.translate_title
+            temp_t_title = temp_data.title_translate
             temp_main_classify = temp_data.main_classify
 
             temp_result = {
@@ -120,7 +122,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
-    
+    print(return_format_json)
     return return_format_json
 
 

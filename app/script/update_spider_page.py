@@ -29,7 +29,7 @@ from urllib.parse import urlparse
         }
     }
 '''
-def get_task_from_db(max_num=10):
+def get_task_from_db(max_num=40):
     all_params = []
     with Session(engine, autoflush=False) as db:
         # status: 2是待下载；1是下载完成；0是下载失败

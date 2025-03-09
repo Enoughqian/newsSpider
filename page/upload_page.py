@@ -88,7 +88,7 @@ def upload_page():
             st.session_state.left_data_1 = [i for i in filtered_news if i["classify"] == "政治"]
             st.session_state.left_data_2 = [i for i in filtered_news if i["classify"] == "军事"]
             st.session_state.left_data_3 = [i for i in filtered_news if i["classify"] == "社会"]
-            st.session_state.left_data_4 = [i for i in filtered_news if i["classify"] == "军事"]
+            st.session_state.left_data_4 = [i for i in filtered_news if i["classify"] == "经济"]
 
             if 'right_data' not in st.session_state:
                 st.session_state.right_data = []
