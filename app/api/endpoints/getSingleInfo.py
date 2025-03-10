@@ -76,7 +76,9 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
         else:
             return_format_json["msg"] = "不存在!"
             return_format_json["err_code"] = 2
-    except:
+    except Exception as e:
+        logger.info("err: "+ str(e))
         return_format_json["msg"] = "获取失败!"
         return_format_json["err_code"] = 3
+    logger.info(json.dumps(return_format_json, ensure_ascii=False))
     return return_format_json
