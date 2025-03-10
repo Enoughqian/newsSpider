@@ -64,7 +64,7 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
         # 数据组合
         page_content = page_content.replace("TITLE", title)
         page_content = page_content.replace("PIC_URL", pic_set)
-        page_content = page_content.replace("CONTENT", content.replace("\n",'</p><p style="text-align: left;">'))
+        page_content = page_content.replace("CONTENT", content.replace("\n",'</p><p>'))
 
         return HTMLResponse(content=page_content)
     else:
