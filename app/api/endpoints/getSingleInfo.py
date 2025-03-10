@@ -81,5 +81,5 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
         logger.info("err: "+ str(e))
         return_format_json["msg"] = "获取失败!"
         return_format_json["err_code"] = 3
-    logger.info(json.dumps(return_format_json, ensure_ascii=False))
+    print(return_format_json)
     return return_format_json
