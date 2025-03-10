@@ -82,6 +82,10 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     temp_data.keyword = target_content
                 if target_key == "title_translate":
                     temp_data.title_translate = target_content
+                if target_key == "content":
+                    temp_data.content = target_content
+                if target_key == "main_classify":
+                    temp_data.main_classify = target_content
                 db.add(temp_data)
                 db.commit()
             else:

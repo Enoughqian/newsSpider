@@ -56,21 +56,37 @@ else:
         title = all_info.get("title","")
         st.markdown("<h1 style='text-align: center; font-size: 40px; font-family: Arial, sans-serif; font-weight: bold;'>{}</h1>".format(title), unsafe_allow_html=True)
 
+        # 添加跳转链接
+        original_page_link = all_info.get("link","")  # 替换为你要跳转的实际链接
+        st.markdown("<p style='text-align: center;'><a href='{}' style='text-decoration: none; color: blue;'>跳转到原始页面</a></p>".format(original_page_link), unsafe_allow_html=True)
+
         # 展示标题翻译
         title_translate = all_info.get("title_translate","")
         title_translate_input = st.text_area("标题翻译", title_translate, height=70)
         if st.button("改动标题翻译"):
             data = {"translate": title_translate_input}
             fetch_save(unique_id, data)
-
+        
         # 展示图片
         pic_set = all_info.get("pic_set","")
         if pic_set:
             st.image(pic_set,caption="新闻图片")
+        
+        # 展示类别, 下拉框修改
+        options = ["政治", "军事", "经济", "社会"]
+        default_value = all_info.get("main_classify", "社会").split(";")[0]
+        # 创建下拉框
+        selected_option = st.selectbox("请选择一个选项:", options, index=options.index(default_value))
+        if st.button("改动类别"):
+            data = {"main_classify": selected_option}
+            fetch_save(unique_id, data)
 
-        # 展示正文
+        # 展示正文，可编辑
         content = all_info.get("content","")
-        st.text_area("正文", value=content, height=300, disabled=True)
+        content_input = st.text_area("原文", value=content, height=300)
+        if st.button("改动原文"):
+            data = {"content": content_input}
+            fetch_save(unique_id, data)
         
         # 展示翻译
         translate = all_info.get("translate","")
