@@ -52,6 +52,7 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
             NewsDetail.translate,
             NewsDetail.classify,
             NewsDetail.keyword,
+            NewsDetail.main_classify,
             NewsDetail.extract_country
         ).where(
             NewsDetail.unique_id == unique_id
@@ -68,7 +69,7 @@ async def endpoint(unique_id, db: Session = Depends(deps.get_db), ):
                 "pic_set": temp.pic_set if temp.pic_set else "",
                 "abstract": temp.abstract if temp.abstract else "",
                 "translate": temp.translate if temp.translate else "",
-                "main_classify": temp.mmain_classify if temp.main_classify else "",
+                "main_classify": temp.main_classify if temp.main_classify else "",
                 "classify": temp.classify if temp.classify else "",
                 "keyword": temp.keyword if temp.keyword else "",
                 "country": temp.extract_country if temp.extract_country else ""
