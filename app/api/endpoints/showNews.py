@@ -41,11 +41,12 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
     
     # 获取文本信息
     smt = select(
-        FormalNews
+        NewsDetail
     ).where(
-        FormalNews.id == str(id)
+        NewsDetail.unique_id == str(id)
     )
     data = db.exec(smt).one_or_none()
+    print(data)
     if data:
         content = data.content
         title = data.title
