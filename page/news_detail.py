@@ -113,7 +113,7 @@ else:
             data = {"keyword": keyword_input}
             fetch_save(unique_id, data)
         
-        if cookies["permission"]:
+        if cookies.get("permission", 0) == 1:
             # 提交改动到正式库
             if st.button("提交到正式库"):
                 data = {
