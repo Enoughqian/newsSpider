@@ -108,17 +108,16 @@ else:
         if st.button("改动关键词"):
             data = {"keyword": keyword_input}
             fetch_save(unique_id, data)
-
-        # 提交改动到正式库
-        if st.button("提交到正式库"):
-            data = {
-                "title_translate": title_translate_input,
-                "translate": translate_input,
-                "abstract": abstract_input,
-                "keyword": keyword_input
-            }
-            fetch_save(unique_id, data)
-
         
+        if cookies["permission"]:
+            # 提交改动到正式库
+            if st.button("提交到正式库"):
+                data = {
+                    "title_translate": title_translate_input,
+                    "translate": translate_input,
+                    "abstract": abstract_input,
+                    "keyword": keyword_input
+                }
+                fetch_save(unique_id, data)
     else:
         st.write("请提供项目 ID 以访问具体内容。")

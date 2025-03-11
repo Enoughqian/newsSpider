@@ -8,9 +8,11 @@ def get_all_info():
         smt = select(LoginInfo)
         all_login_info = db.exec(smt).all()
     # 获取所有账号密码
-    result = {}
+    password = {}
+    permission = {}
     for temp in all_login_info:
-        result[temp.name] = temp.password
-    return result
+        password[temp.name] = temp.password
+        permission[temp.name] = temp.permission
+    return password, permission
 
 

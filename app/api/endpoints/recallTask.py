@@ -93,7 +93,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
                         exist_data.tag = temp_tag
-                        exist_data.main_classify = temp_classify
+                        exist_data.main_classify = temp_classify[0]
                         exist_data.cost += temp_cost
                         exist_data.update_time = datetime.now()
                         db.add(exist_data)

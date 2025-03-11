@@ -10,3 +10,4 @@ class LoginInfo(SQLModel, table=True):
     id: int = Field(primary_key=True)
     name: str
     password: str
+    permission: int

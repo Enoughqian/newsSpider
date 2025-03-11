@@ -26,10 +26,11 @@ def login():
     st.title("后台管理登录")
     username = st.text_input("用户名")
     password = st.text_input("密码", type="password")
-    USER_CREDENTIALS = get_all_info()
+    USER_CREDENTIALS, USER_PERMISSION = get_all_info()
     if st.button("登录"):
         if USER_CREDENTIALS.get(username) == password:
             cookies["logged_in"] = "True"  # 存储为字符串
+            cookies["permission"] = USER_PERMISSION.get(username,"0")
             cookies.save()
             st.success("登录成功！")
         else:
