@@ -75,6 +75,10 @@ else:
         # 展示类别, 下拉框修改
         options = ["政治", "军事", "经济", "社会"]
         default_value = all_info.get("main_classify", "社会").split(";")[0]
+        # 给固定值,兼容旧数据
+        if default_value not in options:
+            default_value = "社会"
+        
         # 创建下拉框
         selected_option = st.selectbox("请选择一个选项:", options, index=options.index(default_value))
         if st.button("改动类别"):
