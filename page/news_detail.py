@@ -42,7 +42,7 @@ if "logged_in" not in cookies:
 if cookies["logged_in"] == "False":
     st.error("请先登录。")
 else:
-    st.write("当前为详情页面")
+    st.title("详情编辑页")
 
     # 获取 URL 查询参数
     query_params = st.query_params
@@ -66,6 +66,7 @@ else:
         if st.button("改动标题翻译"):
             data = {"translate": title_translate_input}
             fetch_save(unique_id, data)
+            st.rerun()
         
         # 展示图片
         pic_set = all_info.get("pic_set","")
@@ -84,6 +85,7 @@ else:
         if st.button("改动类别"):
             data = {"main_classify": selected_option}
             fetch_save(unique_id, data)
+            st.rerun()
 
         # 展示正文，可编辑
         content = all_info.get("content","")
@@ -91,6 +93,7 @@ else:
         if st.button("改动原文"):
             data = {"content": content_input}
             fetch_save(unique_id, data)
+            st.rerun()
         
         # 展示翻译
         translate = all_info.get("translate","")
@@ -98,6 +101,7 @@ else:
         if st.button("改动翻译"):
             data = {"translate": translate_input}
             fetch_save(unique_id, data)
+            st.rerun()
 
         # 展示编辑摘要
         abstract = all_info.get("abstract", "")
@@ -105,6 +109,7 @@ else:
         if st.button("改动摘要"):
             data = {"abstract": abstract_input}
             fetch_save(unique_id, data)
+            st.rerun()
         
         # 展示关键词
         keyword = all_info.get("keyword", "")
@@ -112,6 +117,7 @@ else:
         if st.button("改动关键词"):
             data = {"keyword": keyword_input}
             fetch_save(unique_id, data)
+            st.rerun()
         
         if cookies.get("permission", "NORMAL") == "ADMIN":
             # 提交改动到正式库
@@ -123,5 +129,6 @@ else:
                     "keyword": keyword_input
                 }
                 fetch_save(unique_id, data)
+                st.rerun()
     else:
         st.write("请提供项目 ID 以访问具体内容。")
