@@ -30,7 +30,7 @@ def login():
     if st.button("登录"):
         if USER_CREDENTIALS.get(username) == password:
             cookies["logged_in"] = "True"  # 存储为字符串
-            cookies["permission"] = USER_PERMISSION.get(username,"0")
+            cookies["permission"] = USER_PERMISSION.get(username,"NORMAL")
             cookies.save()
             st.success("登录成功！")
         else:
