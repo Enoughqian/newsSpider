@@ -75,7 +75,7 @@ def get_task_from_db(max_num=10):
         logger.info("数量: "+ str(len(exist_basic)))
         input_data = {}
         for temp_basic in exist_basic:
-            temp_unique_id = temp_basic.unique_id
+            temp_unique_id = temp_basic.id
             temp_title = temp_basic.title
             input_data[temp_unique_id] = temp_title
         print(input_data)
