@@ -26,6 +26,7 @@ class NewsDetail(SQLModel, table=True):
     keyword: str
     country_state: str
     extract_country: str
+    edit_state: int
     feature_state: int
     feature: bytes
     cost: float

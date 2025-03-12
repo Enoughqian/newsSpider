@@ -126,7 +126,8 @@ else:
                     "title_translate": title_translate_input,
                     "translate": translate_input,
                     "abstract": abstract_input,
-                    "keyword": keyword_input
+                    "keyword": keyword_input,
+                    "content": content_input
                 }
                 fetch_save(unique_id, data)
                 st.rerun()

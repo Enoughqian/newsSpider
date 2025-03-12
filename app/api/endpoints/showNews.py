@@ -31,7 +31,7 @@ def custom_line_break(text):
     result = re.sub(pattern, '.\n', text)
     
     # 添加缩进
-    indented_result = '\n'.join(['  ' + line.strip() for line in result.splitlines()])
+    indented_result = '\n'.join(['  ' + line.strip() for line in result.splitlines() if len(line.strip())>2])
     
     return indented_result
 
@@ -46,7 +46,6 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
         NewsDetail.unique_id == str(id)
     )
     data = db.exec(smt).one_or_none()
-    print(data)
     if data:
         content = data.content
         title = data.title

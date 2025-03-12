@@ -76,16 +76,22 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             if temp_data:
                 if target_key == "abstract":
                     temp_data.abstract = target_content
+                    temp_data.edit_state = 1
                 if target_key == "translate":
                     temp_data.translate = target_content
+                    temp_data.edit_state = 1
                 if target_key == "keyword":
                     temp_data.keyword = target_content
+                    temp_data.edit_state = 1
                 if target_key == "title_translate":
                     temp_data.title_translate = target_content
+                    temp_data.edit_state = 1
                 if target_key == "content":
                     temp_data.content = target_content
+                    temp_data.edit_state = 1
                 if target_key == "main_classify":
                     temp_data.main_classify = target_content
+                    temp_data.edit_state = 1
                 db.add(temp_data)
                 db.commit()
             else:
@@ -97,11 +103,15 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             translate = data["translate"]
             keyword = data["keyword"]
             title_translate = data["title_translate"]
+            content = data["content"]
+
             if temp_data:
                 temp_data.abstract = abstract
                 temp_data.translate = translate
                 temp_data.keyword = keyword
+                temp_data.content = content
                 temp_data.title_translate = title_translate
+                temp_data.edit_state = 1
                 db.add(temp_data)
                 db.commit()
             else:
