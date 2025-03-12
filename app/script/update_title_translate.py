@@ -67,9 +67,9 @@ async def catch_data(params):
 def get_task_from_db(max_num=10):
     with Session(engine, autoflush=False) as db:
         # 标题翻译
-        smt = select(NewsDetail).where(
-            NewsDetail.title_translate == None
-        ).order_by(NewsDetail.update_time.desc()).limit(max_num)
+        smt = select(ListTask).where(
+            ListTask.title_translate == None
+        ).order_by(ListTask.update_time.desc()).limit(max_num)
         # 获取全部的
         exist_basic = db.exec(smt).all()
         logger.info("数量: "+ str(len(exist_basic)))
@@ -81,7 +81,21 @@ def get_task_from_db(max_num=10):
         print(input_data)
         # 请求
         result = asyncio.run(catch_data(input_data))
-        print(result)
+        # 更新ListTask
+        update_list = []
+        for temp_key, temp_title_trans in result.items():
+            smt = select(ListTask).where(
+                ListTask.id == temp_key
+            )
+            exist_basic = db.exec(smt).one_or_none()
+            if exist_basic:
+                exist_basic.title_translate = temp_title_trans
+                update_list.append(exist_basic)
+        if update_list:
+            db.add_all(update_list)
+            db.commit()
+        
+        # 更新news_detail表
         update_list = []
         for temp_key, temp_title_trans in result.items():
             smt = select(NewsDetail).where(

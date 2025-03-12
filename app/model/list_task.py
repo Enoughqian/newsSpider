@@ -10,6 +10,7 @@ class ListTask(SQLModel, table=True):
     platform_id: str
     link: str
     title: str
+    title_translate: str
     institution: str 
     country: str
     tag: int
