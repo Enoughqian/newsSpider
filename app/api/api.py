@@ -9,6 +9,7 @@ from app.api.endpoints import (
     setSingleInfo,
     showNews,
     filterUpload,
+    filterTask,
     test
 )
 
@@ -22,4 +23,5 @@ api_router.include_router(getSingleInfo.router, tags=["getSingleInfo"])
 api_router.include_router(setSingleInfo.router, tags=["setSingleInfo"])
 api_router.include_router(showNews.router, tags=["showNews"])
 api_router.include_router(filterUpload.router, tags=["filterUpload"])
+api_router.include_router(filterTask.router, tags=["filterTask"])
 api_router.include_router(test.router, tags = ["test"])

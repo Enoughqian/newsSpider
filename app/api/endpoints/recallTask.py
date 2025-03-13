@@ -82,7 +82,11 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 try:
                     temp_id = int(temp["id"])
                     temp_tag = int(temp["tag"])
-                    temp_classify = str(temp["classify"])
+                    temp_classify = [i for i in temp["classify"] if i in ["政治","社会","经济","军事"]]
+                    if not len(temp_classify):
+                        temp_classify = ["社会"]
+                    temp_classify = ";".join(temp_classify)
+                    
                     # 处理花费
                     try:
                         temp_cost = float(temp["cost"])

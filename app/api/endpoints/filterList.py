@@ -86,6 +86,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             end_date = start_date + timedelta(days=1)
             filters.append(ListTask.update_time >= start_date)
             filters.append(ListTask.update_time < end_date)
+            print(filters)
         if keyword is not None:
             filters.append(ListTask.title.like(f"%{keyword}%"))
         if status is not None:
@@ -98,6 +99,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         return return_format_json
     
     try:
+        print(filters)
         # 筛选条件
         if filters:
             statement = statement.where(*filters)
