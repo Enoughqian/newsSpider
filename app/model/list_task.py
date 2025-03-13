@@ -7,8 +7,9 @@ class ListTask(SQLModel, table=True):
     __table_args__ = {'extend_existing': True}
 
     id: int = Field(primary_key=True)
+    
     platform_id: str
-    link: str
+    link: str = Field(index=True, unique=True)  # 添加唯一约束
     title: str
     title_translate: str
     institution: str 
