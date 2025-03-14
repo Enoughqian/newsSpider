@@ -126,6 +126,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_link = temp_data.link
             temp_title_translate = temp_data.title_translate
             temp_state = temp_data.tag
+            temp_main_classify = temp_data.main_classify
 
             if state:
                 temp_f_state = state
@@ -143,7 +144,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 "title": temp_title,
                 "link": temp_link,
                 "title_translate": temp_title_translate,
-                "state": temp_f_state
+                "state": temp_f_state,
+                "main_classify": temp_main_classify
             }
 
             return_format_json["data"].append(temp_result)
