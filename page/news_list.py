@@ -33,7 +33,6 @@ def fetch_news(params):
         st.error("请求失败，请稍后重试。")
         return pd.DataFrame(), 0, 0
 
-
 # 展示详情处理
 def exchange_dataframe(data, columns):
     columns_map = {
@@ -65,32 +64,95 @@ def exchange_dataframe(data, columns):
     html += "</tbody></table>"
     return html
 
+'''
+    状态: state
+        已抓取未生成
+        已生成未处理
+        运营已处理
+        abstract_state
+        edit_state
+    国家: country
+    主题: topic
+    发布时间: publishdate
+    更新时间: refreshdate
+    标题关键词: title_keyword
+    标题翻译关键词: title_translate_keyword
+    原文关键词: content_keyword
+    原文翻译关键词: content_translate_keyword
+    关键词包含: contain_keyword
+'''
+
+def get_all_country():
+    return ["南非","印尼","美国","英国"]
+
 def news_list():
     # 创建筛选选项
     st.markdown("<h1 style='font-size: 30px;'>筛选条件</h1>", unsafe_allow_html=True)
 
     # 状态筛选
     state_filter = st.selectbox(
-        "选择状态 (可选)",
-        options=["所有", "处理完成", "有效未下载", "无效", "未识别"]
+        "选择状态 (单选)",
+        options=["已生成未处理", "已抓取未生成", "运营已处理"],
+        index = 0
     )
     
     # 国家筛选
-    country_filter = st.text_input("国家 (输入国家名，可选)", value=None)
+    country_filter = st.multiselect(
+        '选择国家 (可多选)',
+        get_all_country()
+    )
     
-    # 发布时间筛选
-    publish_date_filter = st.date_input("选择发布时间 (可选)", value=None)
+    # 请选择类别
+    topic_filter = st.multiselect(
+        "选择类别 (可多选)",
+        ["社会","政治","军事","经济"]
+    )
 
+    # 发布时间筛选
+    publish_date_filter = st.date_input("选择发布时间", value=None)
+
+    # 更新时间筛选
+    refresh_date_filter = st.date_input("选择更新时间", value=None)
+
+    # 标题包含筛选
+    title_keyword_filter = st.text_input("标题包含", value=None)
+
+    # 标题翻译包含筛选
+    title_translate_keyword_filter = st.text_input("标题翻译包含", value=None)
+
+    # 原文包含筛选
+    content_keyword_filter = st.text_input("原文包含", value=None)
+
+    # 原文翻译包含筛选
+    content_translate_keyword_filter = st.text_input("原文翻译包含", value=None)
+    
     # 关键词筛选
-    keyword_filter = st.text_input("关键词 (输入关键词，可选)", value=None)
+    contain_keyword_filter = st.text_input("关键词包含", value=None)
 
     # 确认按钮
+    '''
+    state
+    国家: country
+    主题: topic
+    发布时间: publishdate
+    更新时间: refreshdate
+    标题关键词: title_keyword
+    标题翻译关键词: title_translate_keyword
+    原文关键词: content_keyword
+    原文翻译关键词: content_translate_keyword
+    关键词包含: contain_keyword
+    '''
     if st.button("确认筛选"):
         params = {
-            "state": state_filter if state_filter in ["处理完成","有效未下载","无效","未识别"] else None,
+            "state": state_filter,
             "country": country_filter,
-            "publish_date": publish_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
-            "keyword": keyword_filter,
+            "publishdate": publish_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
+            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
+            "title_keyword": title_keyword_filter if title_keyword_filter else None,
+            "title_translate_keyword": title_translate_keyword_filter if title_translate_keyword_filter else None,
+            "content_keyword": content_keyword_filter if content_keyword_filter else None,
+            "content_translate_keyword": content_translate_keyword_filter if content_translate_keyword_filter else None,
+            "contain_keyword": contain_keyword_filter,
             "page": 1,
             "num": settings.NEWS_PER_PAGE
         }
@@ -119,6 +181,7 @@ def news_list():
             st.session_state.filtered_news, _, _ = fetch_news(st.session_state.filtered_params)  # 重新请求数据
 
         st.subheader("筛选后的新闻列表")
+        
         html_data = exchange_dataframe(st.session_state.filtered_news, ["id", "title", "country", "state"])
         st.markdown(html_data, unsafe_allow_html=True)
     else:

@@ -171,7 +171,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         for temp_data in results:
             temp_title = temp_data.title
             temp_link = temp_data.link
-            temp_country = temp_data.country
+            temp_country = temp_data.extract_country
             temp_result = {
                 "id": temp_data.unique_id,
                 "title": temp_title,

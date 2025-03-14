@@ -24,14 +24,17 @@ router = APIRouter(prefix="/filterTask")
 
 '''
     主题: topic
-    更新时间: update_time
-    中文关键词: china_keyword
-    英文关键词: keyword
+    更新时间: refreshdate
+    中文标题关键词: chinakeyword
+    英文标题关键词: keyword
     状态: tag 0,1,2
         0: 无效
         1: 有效
         2: 未识别
-        3: 人已经标记
+    下载状态: status
+        0: 下载失败
+        1: 下载成功
+        2: 待执行
 '''
 # 接口连接
 @router.post("")
@@ -56,23 +59,19 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         return return_format_json
     
     # 取数据
-    country = rs.get("topic", None)
-    updatedate = rs.get("updatedate", None)
+    topic = rs.get("topic", None)
+    refreshdate = rs.get("refreshdate", None)
+    chinakeyword = rs.get("chinakeyword",None)
     keyword = rs.get("keyword",None)
-    state = rs.get("state", None)
+    state = rs.get("tag", None)
     offset = (page - 1) * num
 
     try:
-        status = None
         tag = None
-        if state == "处理完成":
-            tag = 1
-            status = 1
-        elif state == "有效未下载":
-            tag = 1
-            status = 0
-        elif state == "无效":
+        if state == "无效":
             tag = 0
+        elif state == "有效":
+            tag = 1
         elif state == "未识别":
             tag = 2
 
@@ -82,18 +81,27 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         # 筛选
         statement = select(ListTask)
 
-        # 过滤条件
-        if country is not None:
-            filters.append(ListTask.country == country)
-        if updatedate is not None:
-            start_date = datetime.strptime(updatedate, "%Y-%m-%d").date()
+        # 过滤主题
+        if topic:
+            for temp_topic in topic:
+                filters.append(ListTask.classify.like(f"%{temp_topic}%"))
+        
+        # 更新时间
+        if refreshdate is not None:
+            start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
             filters.append(ListTask.update_time >= start_date)
             filters.append(ListTask.update_time < end_date)
+        
+        # 中文关键词
+        if chinakeyword is not None:
+            filters.append(ListTask.title_translate.like(f"%{chinakeyword}%"))
+        
+        # 关键词
         if keyword is not None:
             filters.append(ListTask.title.like(f"%{keyword}%"))
-        if status is not None:
-            filters.append(ListTask.status == status)
+        
+        # 状态
         if tag is not None:
             filters.append(ListTask.tag == tag)
     except Exception as e:
@@ -116,13 +124,14 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         for temp_data in results:
             temp_title = temp_data.title
             temp_link = temp_data.link
-            temp_country = temp_data.country
+            temp_title_translate = temp_data.title_translate
+
             temp_result = {
                 "id": temp_data.id,
                 "title": temp_title,
                 "link": temp_link,
-                "country": temp_country,
-                "state": state if state else "",
+                "country": temp_title_translate,
+                "state": state if state else ""
             }
 
             return_format_json["data"].append(temp_result)

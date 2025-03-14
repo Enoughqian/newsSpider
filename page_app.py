@@ -2,7 +2,7 @@ import streamlit as st
 from page.news_list import news_list
 from page.login import get_all_info
 from page.upload_page import upload_page
-from page.rec_title import rec_title
+# from page.rec_title import rec_title
 from app.config.env_config import settings
 from streamlit_cookies_manager import EncryptedCookieManager
 import warnings
