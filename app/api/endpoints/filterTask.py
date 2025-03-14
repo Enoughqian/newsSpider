@@ -125,13 +125,25 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_title = temp_data.title
             temp_link = temp_data.link
             temp_title_translate = temp_data.title_translate
+            temp_state = temp_data.state
+
+            if state:
+                temp_f_state = state
+            else:
+                temp_f_state = ""
+                if int(temp_state) == 0:
+                    temp_f_state = "无效"
+                elif int(temp_state) == 1:
+                    temp_f_state = "有效"
+                else:
+                    temp_f_state = "未识别"
 
             temp_result = {
                 "id": temp_data.id,
                 "title": temp_title,
                 "link": temp_link,
                 "title_translate": temp_title_translate,
-                "state": state if state else ""
+                "state": temp_f_state
             }
 
             return_format_json["data"].append(temp_result)
