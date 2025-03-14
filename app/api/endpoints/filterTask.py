@@ -125,7 +125,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_title = temp_data.title
             temp_link = temp_data.link
             temp_title_translate = temp_data.title_translate
-            temp_state = temp_data.state
+            temp_state = temp_data.tag
 
             if state:
                 temp_f_state = state
