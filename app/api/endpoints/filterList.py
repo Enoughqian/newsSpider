@@ -173,7 +173,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_link = temp_data.link
             temp_country = temp_data.country
             temp_result = {
-                "id": temp_data.id,
+                "id": temp_data.unique_id,
                 "title": temp_title,
                 "link": temp_link,
                 "country": temp_country,
