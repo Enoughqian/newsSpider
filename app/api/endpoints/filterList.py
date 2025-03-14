@@ -103,7 +103,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         # 过滤国家
         if country:
             for temp_country in country:
-                filters.append(NewsDetail.country.like(f"%{temp_country}%"))
+                filters.append(NewsDetail.extract_country.like(f"%{temp_country}%"))
         
         # 过滤主题
         if topic:
