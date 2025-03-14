@@ -23,11 +23,21 @@ import re
 router = APIRouter(prefix="/filterList")
 
 '''
+    状态: state
+        已抓取未生成
+        已生成未处理
+        运营已处理
+        abstract_state
+        edit_state
     国家: country
     主题: topic
     发布时间: publishdate
-    关键词: keyword
-    状态: state
+    更新时间: refreshdate
+    标题关键词: title_keyword
+    标题翻译关键词: title_translate_keyword
+    原文关键词: content_keyword
+    原文翻译关键词: content_translate_keyword
+    关键词包含: contain_keyword
 '''
 # 接口连接
 @router.post("")
@@ -52,60 +62,107 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         return return_format_json
     
     # 取数据
-    country = rs.get("country", None)
-    updatedate = rs.get("updatedate", None)
-    keyword = rs.get("keyword",None)
+    country = rs.get("country", [])
+    topic = rs.get("topic", [])
+    publishdate = rs.get("publishdate", None)
+    refreshdate = rs.get("refreshdate", None)
+    
     state = rs.get("state", None)
+    title_keyword = rs.get("title_keyword", None)
+    title_translate_keyword = rs.get("title_translate_keyword", None)
+    content_keyword = rs.get("content_keyword", None)
+    content_translate_keyword = rs.get("content_translate_keyword", None)
+    contain_keyword = rs.get("contain_keyword", None)
+
     offset = (page - 1) * num
 
+    '''
+        状态: state
+            已抓取未生成: 
+            已生成未处理
+            运营已处理
+    '''
     try:
-        status = None
-        tag = None
-        if state == "处理完成":
-            tag = 1
-            status = 1
-        elif state == "有效未下载":
-            tag = 1
-            status = 0
-        elif state == "无效":
-            tag = 0
-        elif state == "未识别":
-            tag = 2
+        abstract_state = None
+        edit_state = None
+        if state == "已抓取未生成":
+            abstract_state = 0
+        elif state == "已生成未处理":
+            abstract_state = 1
+            edit_state = 0
+        elif state == "运营已处理":
+            abstract_state = 1
+            edit_state = 1
 
         # 过滤
         filters = []
 
         # 筛选
-        statement = select(ListTask)
+        statement = select(NewsDetail)
 
-        # 过滤条件
-        if country is not None:
-            filters.append(ListTask.country == country)
-        if updatedate is not None:
-            start_date = datetime.strptime(updatedate, "%Y-%m-%d").date()
+        # 过滤国家
+        if country:
+            for temp_country in country:
+                filters.append(NewsDetail.country.like(f"%{temp_country}%"))
+        
+        # 过滤主题
+        if topic:
+            for temp_topic in topic:
+                filters.append(NewsDetail.classify.like(f"%{temp_topic}%"))
+        
+        # 发布时间
+        if publishdate:
+            start_date = datetime.strptime(publishdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
-            filters.append(ListTask.update_time >= start_date)
-            filters.append(ListTask.update_time < end_date)
-            print(filters)
-        if keyword is not None:
-            filters.append(ListTask.title.like(f"%{keyword}%"))
-        if status is not None:
-            filters.append(ListTask.status == status)
-        if tag is not None:
-            filters.append(ListTask.tag == tag)
+            filters.append(NewsDetail.publish_date >= start_date)
+            filters.append(NewsDetail.publish_date < end_date)
+        
+        # 更新时间
+        if refreshdate:
+            start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
+            end_date = start_date + timedelta(days=1)
+            filters.append(NewsDetail.update_time >= start_date)
+            filters.append(NewsDetail.update_time < end_date)
+        
+        # 标题原文关键词
+        if title_keyword:
+            filters.append(NewsDetail.title.like(f"%{title_keyword}%"))
+        
+        # 标题翻译关键词
+        if title_translate_keyword:
+            filters.append(NewsDetail.title.like(f"%{title_translate_keyword}%"))
+
+        # 内容关键词
+        if content_keyword:
+            filters.append(NewsDetail.content.like(f"%{content_keyword}%"))
+        
+        # 内容翻译关键词
+        if content_translate_keyword:
+            filters.append(NewsDetail.translate.like(f"%{content_translate_keyword}%"))
+        
+        # 包含关键词
+        if contain_keyword:
+            filters.append(NewsDetail.translate.like(f"%{contain_keyword}%"))
+        
+        # 生成状态判断
+        if abstract_state is not None:
+            filters.append(NewsDetail.abstract_state == abstract_state)
+        
+        # 编辑状态判断
+        if edit_state is not None:
+            filters.append(NewsDetail.edit_state == edit_state)
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)
         return return_format_json
     
     try:
-        print(filters)
         # 筛选条件
         if filters:
             statement = statement.where(*filters)
             
         statement = statement.offset(offset).limit(num)
-        count_statement = select(func.count(ListTask.id)).where(*filters) if filters else select(func.count(ListTask.id))
+        count_statement = select(func.count(NewsDetail.unique_id)).where(*filters) if filters else select(func.count(NewsDetail.unique_id))
         
         # 过滤
         results = db.exec(statement).all()
