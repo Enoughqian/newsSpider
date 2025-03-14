@@ -83,7 +83,9 @@ def exchange_dataframe(data, columns):
 '''
 
 def get_all_country():
-    return ["南非","印尼","美国","英国"]
+    url = f"http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/news_server/api/getCountry"
+    response = requests.get(url)
+    return response.json()["data"]
 
 def news_list():
     # 创建筛选选项
