@@ -191,30 +191,30 @@ def rec_title():
         }
         
         # 发送请求获取第一页数据
-        filtered_new_rec, total_count, total_page_num = fetch_news(params)
+        filtered_rec, total_count, total_page_num = fetch_news(params)
 
-        if not filtered_new_rec.empty:
+        if not filtered_rec.empty:
             st.session_state.filtered_params = params  # 存储筛选条件
             st.session_state.total_pages = total_page_num
             st.session_state.current_page = 1  # 重置当前页为 1
-            st.session_state.filtered_new_rec = filtered_new_rec  # 存储第一页数据
+            st.session_state.filtered_rec = filtered_rec  # 存储第一页数据
         else:
             st.warning("没有符合条件的新闻。")
-            st.session_state.filtered_new_rec = pd.DataFrame()  # 保持为空
+            st.session_state.filtered_rec = pd.DataFrame()  # 保持为空
             st.session_state.total_pages = 0  # 总页数设为0
 
     # 如果筛选后的数据存在
-    if 'filtered_new_rec' in st.session_state and st.session_state.filtered_new_rec is not None and st.session_state.total_pages > 0:
+    if 'filtered_rec' in st.session_state and st.session_state.filtered_rec is not None and st.session_state.total_pages > 0:
         # 页码选择
         page = st.selectbox("选择页码", list(range(1, st.session_state.total_pages + 1)), index=st.session_state.current_page - 1)
         # 如果选择的页码变化，重新请求数据
         if page != st.session_state.current_page:
             st.session_state.current_page = page
             st.session_state.filtered_params["page"] = page  # 更新请求参数中的页码
-            st.session_state.filtered_new_rec, _, _ = fetch_news(st.session_state.filtered_params)  # 重新请求数据
+            st.session_state.filtered_rec, _, _ = fetch_news(st.session_state.filtered_params)  # 重新请求数据
 
         st.subheader("筛选后的新闻列表")
-        exchange_dataframe_rec(st.session_state.filtered_new_rec)
+        exchange_dataframe_rec(st.session_state.filtered_rec)
     else:
         # 默认显示数据
         st.subheader("全部新闻列表")
