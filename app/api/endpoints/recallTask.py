@@ -80,7 +80,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         if True:
             for temp in rs["data"]:
                 # 处理数据
-                try:
+                # try:
+                if True:
                     temp_id = int(temp["id"])
                     temp_tag = int(temp["tag"])
                     temp_classify = [i for i in temp["classify"] if i in ["政治","社会","经济","军事"]]
@@ -106,8 +107,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                         success_num += 1
                     else:
                         fail_num += 1
-                except:
-                    fail_num += 1
+                # except:
+                #     fail_num += 1
             return_format_json["success_num"] = success_num
             return_format_json["fail_num"] = fail_num
         # except Exception as e:
