@@ -160,7 +160,7 @@ def rec_title():
     # 状态筛选
     state_filter = st.selectbox(
         "选择状态 (可选)",
-        options=["无效", "有效", "待定"]
+        options=["有效", "无效", "待定"]
     )
     
     # 主题筛选
