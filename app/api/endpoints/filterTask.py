@@ -30,7 +30,7 @@ router = APIRouter(prefix="/filterTask")
     状态: tag 0,1,2
         0: 无效
         1: 有效
-        2: 未识别
+        2: 待定
     下载状态: status
         0: 下载失败
         1: 下载成功
@@ -136,7 +136,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 elif int(temp_state) == 1:
                     temp_f_state = "有效"
                 else:
-                    temp_f_state = "未识别"
+                    temp_f_state = "待定"
 
             temp_result = {
                 "id": temp_data.id,
