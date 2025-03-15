@@ -148,7 +148,7 @@ def news_list():
             "state": state_filter,
             "country": country_filter,
             "publishdate": publish_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
-            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
+            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if refresh_date_filter else None,
             "title_keyword": title_keyword_filter if title_keyword_filter else None,
             "title_translate_keyword": title_translate_keyword_filter if title_translate_keyword_filter else None,
             "content_keyword": content_keyword_filter if content_keyword_filter else None,
