@@ -40,6 +40,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         unique_id = int(rs["id"])
         # 包含两种: 编辑和推送
         data = rs.get("data",{})
+        print(data)
     except:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = "输入格式错误"
