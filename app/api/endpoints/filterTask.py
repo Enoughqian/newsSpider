@@ -89,8 +89,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         if refreshdate is not None:
             start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
-            filters.append(ListTask.update_time >= start_date)
-            filters.append(ListTask.update_time < end_date)
+            filters.append(ListTask.create_time >= start_date)
+            filters.append(ListTask.create_time < end_date)
         
         # 中文关键词
         if chinakeyword is not None:
