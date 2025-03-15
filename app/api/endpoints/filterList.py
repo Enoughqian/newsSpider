@@ -2,7 +2,7 @@ from typing import Any, List
 from fastapi import FastAPI, WebSocket, Query, Request, Response, status
 from fastapi.responses import HTMLResponse, ORJSONResponse
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import select, Session, and_
+from sqlmodel import select, Session, and_, or_
 from sqlalchemy.sql.expression import func
 from app.api import deps
 from app.config.env_config import settings
@@ -102,13 +102,11 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
         # 过滤国家
         if country:
-            for temp_country in country:
-                filters.append(NewsDetail.extract_country.like(f"%{temp_country}%"))
+            filters.append(or_(*[NewsDetail.extract_country.like(f"%{temp_country}%") for temp_country in country]))
         
         # 过滤主题
         if topic:
-            for temp_topic in topic:
-                filters.append(NewsDetail.classify.like(f"%{temp_topic}%"))
+            filters.append(or_(*[NewsDetail.main_classify.like(f"%{temp_topic}%") for temp_topic in topic]))
         
         # 发布时间
         if publishdate:

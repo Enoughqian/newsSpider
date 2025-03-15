@@ -72,7 +72,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             tag = 0
         elif state == "有效":
             tag = 1
-        elif state == "未识别":
+        elif state == "待定":
             tag = 2
 
         # 过滤
@@ -83,8 +83,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
         # 过滤主题
         if topic:
-            for temp_topic in topic:
-                filters.append(ListTask.classify.like(f"%{temp_topic}%"))
+            filters.append(or_(*[ListTask.main_classify.like(f"%{temp_topic}%") for temp_topic in topic]))
         
         # 更新时间
         if refreshdate is not None:
