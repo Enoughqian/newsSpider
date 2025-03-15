@@ -3,6 +3,7 @@ from page.news_list import news_list
 from page.login import get_all_info
 from page.upload_page import upload_page
 from page.rec_title import rec_title
+from page.count_page import count_page
 from app.config.env_config import settings
 from streamlit_cookies_manager import EncryptedCookieManager
 import warnings
@@ -46,7 +47,8 @@ def main():
         options = st.sidebar.radio("选择功能", ("统计信息", "标题识别", "新闻列表", "上传生成页"))
 
         if options == "统计信息":
-            st.warning("初始页面")
+            st.title("统计信息页")
+            count_page()
         elif options == "标题识别":
             st.title("标题识别页")
             rec_title()
