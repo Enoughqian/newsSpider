@@ -28,10 +28,6 @@ def fetch_save(unique_id, data):
     )
     response = requests.post(url+"?unique_id={}".format(unique_id), json={"id": unique_id,"data": data})
     result = response.json()
-    print(url)
-    print("------")
-    print({"id": unique_id,"data": data})
-    print(data)
     return result
 
 # 检查cookie
