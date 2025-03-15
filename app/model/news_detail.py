@@ -30,4 +30,5 @@ class NewsDetail(SQLModel, table=True):
     feature_state: int
     feature: bytes
     cost: float
+    create_time: datetime
     update_time: datetime

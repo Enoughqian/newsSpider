@@ -42,7 +42,7 @@ def extract(data):
                 result[i] = result[i].apply(lambda x: x if x != "None" else "")
             # 拼接url
             result["链接"] = result["链接"].apply(lambda x: x if "http" in x else urljoin(domain, x))
-            print(result)
+            
             with Session(engine, autoflush=False) as db:
                 insert_list = []
                 for item in result.values:
@@ -50,7 +50,7 @@ def extract(data):
                     smt = select(ListTask).where(ListTask.link == temp_link)
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
-                        continue
+                        exist_data.update_time = datetime.now()
                     else:
                         # 新建model赋值
                         exist_data = ListTask()
@@ -61,6 +61,7 @@ def extract(data):
                         exist_data.country = item[3]
                         exist_data.tag = 2
                         exist_data.status = 2
+                        exist_data.create_time = datetime.now()
                         exist_data.update_time = datetime.now()
                         exist_data.cost = 0
 

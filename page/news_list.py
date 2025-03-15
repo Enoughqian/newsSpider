@@ -41,7 +41,6 @@ def exchange_dataframe(data, columns):
         "country": "国家",
         "state": "状态"
     }
-
     data = data[columns]
 
     # 构建表头
@@ -100,13 +99,13 @@ def news_list():
     
     # 国家筛选
     country_filter = st.multiselect(
-        '选择国家 (可多选)',
+        '选择国家(可多选)',
         get_all_country()
     )
     
     # 请选择类别
     topic_filter = st.multiselect(
-        "选择类别 (可多选)",
+        "选择主题(可多选)",
         ["社会","政治","军事","经济"]
     )
 
@@ -144,7 +143,7 @@ def news_list():
     原文翻译关键词: content_translate_keyword
     关键词包含: contain_keyword
     '''
-    if st.button("确认筛选"):
+    if st.button("确认筛选",key="list_filter_button_1"):
         params = {
             "state": state_filter,
             "country": country_filter,

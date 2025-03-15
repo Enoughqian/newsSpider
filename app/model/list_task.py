@@ -19,4 +19,5 @@ class ListTask(SQLModel, table=True):
     cost: float
     classify: str
     main_classify: str
+    create_time: datetime
     update_time: datetime

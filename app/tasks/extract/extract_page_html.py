@@ -76,19 +76,13 @@ def extract(data):
             # 处理日期信息
             publish_date = exchange_date("".join(result[2]).strip(), date_type)
 
-            print(content)
-            print(pic_set)
-            print(publish_date)
-            print("=============")
-
             # 数据入库
             with Session(engine, autoflush=False) as db:
                 smt = select(NewsDetail).where(NewsDetail.unique_id == unique_id)
                 exist_data = db.exec(smt).one_or_none()
 
                 if exist_data:
-                    # exist_data.update_time = datetime.now()
-                    pass
+                    exist_data.update_time = datetime.now()
                 else:
                     # 新建model赋值
                     '''
@@ -119,7 +113,9 @@ def extract(data):
                     exist_data.feature_state = 0
                     exist_data.country_state = 0
                     exist_data.extract_country = ""
+                    exist_data.create_time = datetime.now()
                     exist_data.update_time = datetime.now()
+
                     exist_data.cost = 0
                 # 全部提交
                 db.add(exist_data)
