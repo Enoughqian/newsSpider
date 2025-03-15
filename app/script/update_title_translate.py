@@ -49,7 +49,7 @@ async def get_baidu_translate(playwright, params):
     all_result = {}
     for temp_key, temp_sent in params.items():
         temp_content = deepcopy(mode)
-        temp_js = temp_content.replace("PARAMS", temp_sent)
+        temp_js = temp_content.replace("PARAMS", temp_sent.replace("\t","").replace("'","").replace('"',"").replace("\n",""))
         temp_result = await page.evaluate(temp_js)
         temp_result = temp_result.split('"dst":"')[1]
         temp_result = temp_result.split('","metadata":"')[0]
