@@ -129,7 +129,8 @@ else:
                     "keyword": keyword_input,
                     "content": content_input
                 }
-                fetch_save(unique_id, data)
+                result = fetch_save(unique_id, data)
+                print(result)
                 st.success("数据提交成功！")
                 st.rerun()
     else:
