@@ -122,16 +122,18 @@ else:
         if cookies.get("permission", "NORMAL") == "ADMIN":
             # 提交改动到正式库
             if st.button("提交到正式库"):
-                data = {
-                    "title_translate": title_translate_input,
-                    "translate": translate_input,
-                    "abstract": abstract_input,
-                    "keyword": keyword_input,
-                    "content": content_input
-                }
-                result = fetch_save(unique_id, data)
-                print(result)
-                st.success("数据提交成功！")
-                st.rerun()
+                if not title_translate_input or not translate_input or not abstract_input or not keyword_input or not content_input:
+                    st.warning("存在空!请检查")
+                else:
+                    data = {
+                        "title_translate": title_translate_input,
+                        "translate": translate_input,
+                        "abstract": abstract_input,
+                        "keyword": keyword_input,
+                        "content": content_input
+                    }
+                    fetch_save(unique_id, data)
+                    st.success("数据提交成功！")
+                    st.rerun()
     else:
         st.write("请提供项目 ID 以访问具体内容。")
