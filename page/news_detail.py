@@ -27,9 +27,12 @@ def fetch_save(unique_id, data):
         settings.SERVER_PORT
     )
     response = requests.post(url+"?unique_id={}".format(unique_id), json={"id": unique_id,"data": data})
-    data = response.json()
+    result = response.json()
+    print(url)
+    print("------")
+    print({"id": unique_id,"data": data})
     print(data)
-    return data
+    return result
 
 # 检查cookie
 if not cookies.ready():
