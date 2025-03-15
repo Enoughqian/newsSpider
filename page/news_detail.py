@@ -28,6 +28,7 @@ def fetch_save(unique_id, data):
     )
     response = requests.post(url+"?unique_id={}".format(unique_id), json={"id": unique_id,"data": data})
     data = response.json()
+    print(data)
     return data
 
 # 检查cookie
@@ -130,6 +131,7 @@ else:
                     "content": content_input
                 }
                 fetch_save(unique_id, data)
+                st.success("数据提交成功！")
                 st.rerun()
     else:
         st.write("请提供项目 ID 以访问具体内容。")
