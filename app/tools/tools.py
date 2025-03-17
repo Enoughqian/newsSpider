@@ -72,7 +72,12 @@ def exchange_date(date_str, mode):
             if date_str.split(" ")[0] in k:
                 date_str = date_str.replace(date_str.split(" ")[0], v)
                 date_obj = datetime.strptime(date_str, "%m %d %Y")
-    
+    if mode == 4:
+        date_str = date_str.split("|")[1].strip().replace(",","")
+        for k,v in month_map.items():
+            if date_str.split(" ")[0] in k:
+                date_str = date_str.replace(date_str.split(" ")[0], v)
+                date_obj = datetime.strptime(date_str, "%m %d %Y")
     if not date_obj:
         date_obj = datetime.now()
     return date_obj
