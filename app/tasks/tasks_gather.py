@@ -61,6 +61,25 @@ def extract_page(self, data: dict):
     return extract_page_result
 
 if __name__ == "__main__":
+    data = {
+        "platform_id": "1000",
+        "link": "https://defence-blog.com/category/news/page/1/",
+        "spider_list_func": "spider_pjsget",
+        "extract_list_func": "extract_list_html",
+        "extract_list_params": {
+            "link": "//div[@class='td-module-meta-info td-module-meta-info-bottom']/h3/a/@href",
+            "title": "//div[@class='td-module-meta-info td-module-meta-info-bottom']/h3/a/text()",
+            "institution": "//x",
+            "country": "//x"
+        }
+    }
+    result = spider_list(data)
+    print(result)
+    with open("test.html","w") as f:
+        f.write(result["data"])
+    result_all = extract_list(result)
+    print(result_all)
+
     # data = {
     #     "platform_id": "1000",
     #     "link": "https://allafrica.com/latest/?page=1",
@@ -151,23 +170,23 @@ if __name__ == "__main__":
     # result = extract_page(result)
     # print(result)
 
-    data = {
-        "id": 15410,
-        "platform_id": "1002",
-        "title": "Turkiye places 'great importance' on ties with eastern, southern Africa: Envoy",
-        "link": "https://www.middleeastmonitor.com/20250210-turkiye-places-great-importance-on-ties-with-eastern-southern-africa-envoy-2/",
-        "spider_page_func": "spider_pjsget",
-        "extract_page_func": "extract_page_html",
-        "extract_page_params": {
-            "content": "//div[@class='memo-single-news-content 0']/p/text()",
-            "pic_set": "//div[@class='col-sm-12 swift-in-viewport']/div/img/@src",
-            "publish_date": "//div[@class='memo-news-date swift-in-viewport']/p/text()"
-        },
-        "date_type": 3
-    }
+    # data = {
+    #     "id": 15410,
+    #     "platform_id": "1002",
+    #     "title": "Turkiye places 'great importance' on ties with eastern, southern Africa: Envoy",
+    #     "link": "https://www.middleeastmonitor.com/20250210-turkiye-places-great-importance-on-ties-with-eastern-southern-africa-envoy-2/",
+    #     "spider_page_func": "spider_pjsget",
+    #     "extract_page_func": "extract_page_html",
+    #     "extract_page_params": {
+    #         "content": "//div[@class='memo-single-news-content 0']/p/text()",
+    #         "pic_set": "//div[@class='col-sm-12 swift-in-viewport']/div/img/@src",
+    #         "publish_date": "//div[@class='memo-news-date swift-in-viewport']/p/text()"
+    #     },
+    #     "date_type": 3
+    # }
     
-    result = spider_page(data)
-    with open("demo.html","w") as f:
-        f.write(result["data"])
-    result = extract_page(result)
-    print(result)
+    # result = spider_page(data)
+    # with open("demo.html","w") as f:
+    #     f.write(result["data"])
+    # result = extract_page(result)
+    # print(result)
