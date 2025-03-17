@@ -135,6 +135,12 @@ def extract(data):
             # 全部提交
             db.add(exist_data)
             db.commit()
+
+    return {
+        "content": content,
+        "pic_set": pic_set,
+        "publish_date": publish_date
+    }
             
 
 if __name__ == "__main__":
