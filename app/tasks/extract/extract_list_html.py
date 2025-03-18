@@ -34,6 +34,7 @@ def extract(data):
             # 转为dataframe处理
             result = pd.DataFrame(result).T
             result.columns = ["链接","标题","发布机构","国家"]
+            result["标题"] = result["标题"].apply(lambda x: str(x).strip())
             
             # 去除特殊符号
             for i in ["链接","发布机构","国家"]:
