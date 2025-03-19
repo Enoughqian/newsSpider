@@ -18,6 +18,10 @@ from urllib.parse import urlparse
 def spider(data):
     # 获取url
     url = data.get("link","")
+    # 解析domain
+    parsed_url = urlparse(url)
+    domain = parsed_url.netloc
+    
     headers = data.get("headers", 
         {
             'referer': "https://"+domain,
@@ -25,10 +29,6 @@ def spider(data):
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'
         }
     )
-
-    # 解析domain
-    parsed_url = urlparse(url)
-    domain = parsed_url.netloc
 
     state = {
         "data": "",
