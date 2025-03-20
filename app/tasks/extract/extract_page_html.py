@@ -64,7 +64,7 @@ def extract(data):
             for i in result[1]:
                 i = str(i)
                 if len(i) >4:
-                    if "http" in i:
+                    if "http" not in i:
                         pic_set.append(urljoin("https://" + domain, i))
                     else:
                         pic_set.append(i)
