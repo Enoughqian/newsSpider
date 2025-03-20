@@ -62,12 +62,12 @@ def extract(data):
             # 处理图片信息
             pic_set = ""
             try:
-                temp_url = result[1][0]:
+                temp_url = result[1][0]
                 if "http" not in temp_url:
                     pic_set = urljoin("https://" + domain, temp_url)
             except:
                 pic_set = ""
-                
+
             # 处理日期信息
             publish_date = exchange_date("".join(result[2]).strip(), date_type)
 
