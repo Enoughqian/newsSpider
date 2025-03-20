@@ -71,7 +71,10 @@ else:
         # 展示图片
         pic_set = all_info.get("pic_set","")
         if pic_set:
-            st.image(pic_set,caption="新闻图片")
+            try:
+                st.image(pic_set,caption="新闻图片")
+            except:
+                pass
         
         # 展示类别, 下拉框修改
         options = ["政治", "军事", "经济", "社会"]
