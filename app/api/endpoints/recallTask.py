@@ -82,7 +82,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 try:
                     temp_id = int(temp["id"])
                     temp_tag = int(temp["tag"])
-                    if temp_tag == 0 or temp_tag == 2:
+                    if temp_tag == 0 or temp_tag == -1:
                         temp_classify = []
                     if temp_tag == 1:
                         temp_classify = [i for i in temp["classify"] if i in ["政治","社会","经济","军事"]]
