@@ -71,8 +71,10 @@ def extract(data):
                 pic_set = ""
 
             # 处理日期信息
-            publish_date = exchange_date("".join(result[2]).strip(), date_type)
-
+            try:
+                publish_date = exchange_date("".join(result[2]).strip(), date_type)
+            except:
+                publish_date = datetime.now()
             # 数据入库
             with Session(engine, autoflush=False) as db:
                 smt = select(NewsDetail).where(NewsDetail.unique_id == unique_id)
