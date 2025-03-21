@@ -65,6 +65,8 @@ def extract(data):
                 temp_url = result[1][0]
                 if "http" not in temp_url:
                     pic_set = urljoin("https://" + domain, temp_url)
+                else:
+                    pic_set = temp_url
             except:
                 pic_set = ""
 
