@@ -215,8 +215,7 @@ def inner_upload(origin_data, upload_pic_content):
             split_paragraph = doc.add_paragraph()
             split_paragraph.add_run("\n")
     # 市场数据
-    image_path = './element/tag.jpg'
-    split_graph = doc.add_paragraph()
+    image_path = './element/split.jpg'
     split_graph.alignment = 1  # 居中
     split_graph.add_run().add_picture(image_path, width=Inches(0.1))
     split_run = split_graph.add_run("市场数据")
