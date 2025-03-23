@@ -177,7 +177,7 @@ def inner_upload(origin_data, upload_pic_content):
             title_graph.add_run().add_picture(image_path, width=Inches(0.25))
             title_run = title_graph.add_run("{}.{}".format(index, temp_data.title_translate))
             title_run.font.size = Pt(18)
-            split_run.font.bold = True
+            title_run.font.bold = True
             title_run.font.name = '黑体'
 
             # 内容
