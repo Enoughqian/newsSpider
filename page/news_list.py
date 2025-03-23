@@ -39,7 +39,8 @@ def exchange_dataframe(data, columns):
         "id": "序号",
         "title":"标题",
         "country": "国家",
-        "state": "状态"
+        "state": "状态",
+        "title_translate": "标题翻译"
     }
     data = data[columns]
 
@@ -56,10 +57,10 @@ def exchange_dataframe(data, columns):
         temp_title = i[1]
         temp_country = i[2]
         temp_state = i[3]
-
+        temp_trans = i[4]
         temp_id = f'<a href="http://{settings.SERVER_SHOW_DETAIL_HOST}:{settings.SERVER_SHOW_DETAIL_PORT}?unique_id={temp_id}" target="_blank"> {temp_id}</a>'
         
-        html += f"<tr><td>{temp_id}</td><td>{temp_title}</td><td>{temp_country}</td><td>{temp_state}</td></tr>"
+        html += f"<tr><td>{temp_id}</td><td><p>{temp_title}</p><p>{temp_trans}</p></td><td>{temp_country}</td><td>{temp_state}</td></tr>"
     html += "</tbody></table>"
     return html
 
@@ -154,6 +155,7 @@ def news_list():
             "content_keyword": content_keyword_filter if content_keyword_filter else None,
             "content_translate_keyword": content_translate_keyword_filter if content_translate_keyword_filter else None,
             "contain_keyword": contain_keyword_filter,
+            "topic": topic_filter,
             "page": 1,
             "num": settings.NEWS_PER_PAGE
         }
@@ -183,7 +185,7 @@ def news_list():
 
         st.subheader("筛选后的新闻列表")
         
-        html_data = exchange_dataframe(st.session_state.filtered_news, ["id", "title", "country", "state"])
+        html_data = exchange_dataframe(st.session_state.filtered_news, ["id", "title", "country", "state",'title_translate'])
         st.markdown(html_data, unsafe_allow_html=True)
     else:
         # 默认显示数据
@@ -195,7 +197,7 @@ def news_list():
             }
         )
         # 显示初始的全部新闻
-        html_data = exchange_dataframe(default_data, ["id", "title", "country", "state"])
+        html_data = exchange_dataframe(default_data, ["id", "title", "country", "state","title_translate"])
         st.markdown(html_data, unsafe_allow_html=True)
 
 # # 运行新闻列表函数

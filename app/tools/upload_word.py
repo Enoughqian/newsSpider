@@ -82,8 +82,33 @@ def split_data(data_list):
         else:
             result[k.main_classify] = [k]
     return result
+
+def split_data_by_main(data_list):
+    result = {}
+    final_result = {"国际要闻":[], "经济动态":[]}
+    data_list = [i for i in data_list if i.main_classify in ['政治',"军事","社会","经济"]]
+    # 处理
+    for k in data_list:
+        if k.main_classify in result.keys():
+            result[k.main_classify].append(k)
+        else:
+            result[k.main_classify] = [k]
     
+    # 遍历
+    for k in ["政治","社会","军事"]:
+        temp_data = result.get(k,[])
+        final_result["国际要闻"].extend(temp_data)
+    for k in ["经济"]:
+        temp_data = result.get(k,[])
+        final_result["经济动态"].extend(temp_data)
+    # 去除空的
+    final_result = {k:v for k,v in final_result.items() if len(v) > 0}
+    return final_result
+
 def inner_upload(origin_data, upload_pic_content):
+    # 信息分类
+    new_filter_data = split_data_by_main(origin_data)
+
     # 使用 pypandoc 转换 Markdown 为 Word 文档
     if not os.path.exists("temp_word"):
         os.mkdir("temp_word")
@@ -128,66 +153,67 @@ def inner_upload(origin_data, upload_pic_content):
     emphasis_run.italic = True  # 设置为斜体
     emphasis_run.font.color.rgb = RGBColor(169, 177, 184)
 
-    # 新增要闻展示
-    image_path = './element/split.jpg'
-    # 箭头+普通标题
-    split_graph = doc.add_paragraph()
-    split_graph.alignment = 1  # 居中
-    split_graph.add_run().add_picture(image_path, width=Inches(0.1))
-    split_run = split_graph.add_run("国际要闻")
-    split_run.font.size = Pt(16)
-    split_run.font.bold = True
-    split_run.font.name = '黑体'
-    split_graph.add_run().add_picture(image_path, width=Inches(0.1))
-
-    # 第四部分：添加
-    for i in range(len(origin_data)):
-        temp_data = origin_data[i]
-        index = str(i+1)
-
-        image_path = './element/tag.jpg'
+    for topic, origin_data in new_filter_data.items():
+        # 新增要闻展示
+        image_path = './element/split.jpg'
         # 箭头+普通标题
-        title_graph = doc.add_paragraph()
-        title_graph.add_run().add_picture(image_path, width=Inches(0.25))
-        title_run = title_graph.add_run("{}.{}".format(index, temp_data.title_translate))
-        title_run.font.size = Pt(14)
+        split_graph = doc.add_paragraph()
+        split_graph.alignment = 1  # 居中
+        split_graph.add_run().add_picture(image_path, width=Inches(0.1))
+        split_run = split_graph.add_run(topic)
+        split_run.font.size = Pt(16)
         split_run.font.bold = True
-        title_run.font.name = '黑体'
+        split_run.font.name = '黑体'
+        split_graph.add_run().add_picture(image_path, width=Inches(0.1))
 
-        # 内容
-        content_paragraph = doc.add_paragraph()
-        content_run = content_paragraph.add_run(str(temp_data.abstract).replace("\n","\n\n"))
-        content_run.font.size = Pt(16)
-        content_run.font.name = '黑体'
-        
-        # 图片下载
-        state = 0
-        pic_path = ""
-        if temp_data.pic_set:
-            url = temp_data.pic_set
-            if ".gif" in url:
-                state = 0
-                pic_path = ""
-            else:
-                try:
-                    if not os.path.exists("temp_pic"):
-                        os.mkdir("temp_pic")
-                    temp_content = requests.get(url,timeout=2).content
-                    c_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
-                    with open(c_pic_path,"wb") as f:
-                        f.write(temp_content)
-                    state = 1
-                    pic_path = c_pic_path
-                except:
+        # 第四部分：添加
+        for i in range(len(origin_data)):
+            temp_data = origin_data[i]
+            index = str(i+1)
+
+            image_path = './element/tag.jpg'
+            # 箭头+普通标题
+            title_graph = doc.add_paragraph()
+            title_graph.add_run().add_picture(image_path, width=Inches(0.25))
+            title_run = title_graph.add_run("{}.{}".format(index, temp_data.title_translate))
+            title_run.font.size = Pt(18)
+            split_run.font.bold = True
+            title_run.font.name = '黑体'
+
+            # 内容
+            content_paragraph = doc.add_paragraph()
+            content_run = content_paragraph.add_run(str(temp_data.abstract).replace("\n","\n"))
+            content_run.font.size = Pt(16)
+            content_run.font.name = '黑体'
+            
+            # 图片下载
+            state = 0
+            pic_path = ""
+            if temp_data.pic_set:
+                url = temp_data.pic_set
+                if ".gif" in url:
                     state = 0
                     pic_path = ""
-        if state:
-            pic_paragraph = doc.add_paragraph()
-            pic_run = pic_paragraph.add_run()
-            pic_run.add_picture(pic_path, width=Inches(6))
-            os.remove(pic_path)
-        split_paragraph = doc.add_paragraph()
-        split_paragraph.add_run("\n")
+                else:
+                    try:
+                        if not os.path.exists("temp_pic"):
+                            os.mkdir("temp_pic")
+                        temp_content = requests.get(url,timeout=2).content
+                        c_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
+                        with open(c_pic_path,"wb") as f:
+                            f.write(temp_content)
+                        state = 1
+                        pic_path = c_pic_path
+                    except:
+                        state = 0
+                        pic_path = ""
+            if state:
+                pic_paragraph = doc.add_paragraph()
+                pic_run = pic_paragraph.add_run()
+                pic_run.add_picture(pic_path, width=Inches(6))
+                os.remove(pic_path)
+            split_paragraph = doc.add_paragraph()
+            split_paragraph.add_run("\n")
     # 处理上传图片
     upload_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
     with open(upload_pic_path, "wb") as f:
