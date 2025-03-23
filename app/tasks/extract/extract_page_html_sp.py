@@ -62,19 +62,14 @@ def extract(data):
             # 处理图片信息
             pic_set = ""
             try:
-                temp_url = result[1][0]
-                if "http" not in temp_url:
-                    pic_set = urljoin("https://" + domain, temp_url)
-                else:
-                    pic_set = temp_url
+                pic_set = result[1][0]
+                pic_set = pic_set.split("(")[1].split(")")[0][1:-1]
+                pic_set = urljoin("https://" + domain, pic_set)
             except:
                 pic_set = ""
-
             # 处理日期信息
-            try:
-                publish_date = exchange_date("".join(result[2]).strip(), date_type)
-            except:
-                publish_date = datetime.now()
+            publish_date = exchange_date("".join(result[2]).strip(), date_type)
+
             # 数据入库
             with Session(engine, autoflush=False) as db:
                 smt = select(NewsDetail).where(NewsDetail.unique_id == unique_id)
@@ -134,7 +129,7 @@ def extract(data):
             # 全部提交
             db.add(exist_data)
             db.commit()
-
+    
     return {
         "content": content,
         "pic_set": pic_set,

@@ -78,6 +78,23 @@ def exchange_date(date_str, mode):
             if date_str.split(" ")[0] in k:
                 date_str = date_str.replace(date_str.split(" ")[0], v)
                 date_obj = datetime.strptime(date_str, "%m %d %Y")
+    if mode == 5:
+        date_str = " ".join(date_str.split(" ")[:3]).strip().replace(",","")
+        for k,v in month_map.items():
+            if date_str.split(" ")[0] in k:
+                date_str = date_str.replace(date_str.split(" ")[0], v)
+                date_obj = datetime.strptime(date_str, "%m %d %Y")
+    if mode == 6:
+        date_str = date_str.split("T")[0]
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    if mode == 7:
+        for k,v in month_map.items():
+            if date_str.split(" ")[1] in k:
+                date_str = date_str.replace(date_str.split(" ")[1], v)
+                date_obj = datetime.strptime(date_str, "%d %m %Y")
+    if mode == 8:
+        date_str = date_str.split("-")[0].strip()
+        date_obj = datetime.strptime(date_str, "%d.%m.%Y")
     if not date_obj:
         date_obj = datetime.now()
     return date_obj

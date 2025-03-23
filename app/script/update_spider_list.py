@@ -14,6 +14,7 @@ def get_task_from_db():
     with Session(engine, autoflush=False) as db:
         smt = select(PlatformInfo)
         exist_data = db.exec(smt).all()
+        exist_data = [mm for mm in exist_data if int(mm.state) != 0]
         for temp in exist_data:
             # 查询具体配置
             smt_one = select(SpiderListConfig).where(SpiderListConfig.template_id == temp.template_id)
