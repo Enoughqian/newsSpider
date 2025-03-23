@@ -170,11 +170,13 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             temp_title = temp_data.title
             temp_link = temp_data.link
             temp_country = temp_data.extract_country
+            temp_trans_title = temp_data.title_translate
             temp_result = {
                 "id": temp_data.unique_id,
                 "title": temp_title,
                 "link": temp_link,
                 "country": temp_country,
+                "title_translate": temp_trans_title,
                 "state": state if state else "",
             }
 
