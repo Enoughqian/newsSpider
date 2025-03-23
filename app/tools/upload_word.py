@@ -216,13 +216,14 @@ def inner_upload(origin_data, upload_pic_content):
             split_paragraph.add_run("\n")
     # 市场数据
     image_path = './element/split.jpg'
-    split_graph.alignment = 1  # 居中
-    split_graph.add_run().add_picture(image_path, width=Inches(0.1))
-    split_run = split_graph.add_run("市场数据")
-    split_run.font.size = Pt(16)
-    split_run.font.bold = True
-    split_run.font.name = '黑体'
-    split_graph.add_run().add_picture(image_path, width=Inches(0.1))
+    f_split_graph = doc.add_paragraph()
+    f_split_graph.alignment = 1  # 居中
+    f_split_graph.add_run().add_picture(image_path, width=Inches(0.1))
+    f_split_run = f_split_graph.add_run("市场数据")
+    f_split_run.font.size = Pt(16)
+    f_split_run.font.bold = True
+    f_split_run.font.name = '黑体'
+    f_split_graph.add_run().add_picture(image_path, width=Inches(0.1))
 
     # 处理上传图片
     upload_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
