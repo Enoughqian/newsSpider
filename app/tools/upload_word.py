@@ -317,7 +317,7 @@ def outter_upload(origin_data):
             # 箭头+带超链接标题
             p = doc.add_paragraph()
             p.add_run().add_picture(image_path, width=Inches(0.25))
-            add_hyperlink(p, "http://152.32.218.226:9999/news_server/api/showNews?id={}".format(temp_data.id), "{}.{}".format(index, temp_data.title_translate), '0000EE', True, 14)
+            add_hyperlink(p, "http://152.32.218.226:9999/news_server/api/showNews?id={}".format(temp_data.id), "{}.{}".format(index, temp_data.title_translate), '0000EE', True, 18)
             
             # 图片下载
             state = 0

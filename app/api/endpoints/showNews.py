@@ -51,6 +51,7 @@ async def endpoint(id, db: Session = Depends(deps.get_db), ):
         title = data.title
         pic_set = data.pic_set
         # content = custom_line_break(content)
+        print(content.split("\n"))
         
         # 读取模版html
         file_path = "app/config/mode_html.html"
