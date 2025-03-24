@@ -67,8 +67,10 @@ def update_main_classify():
         )
         exist_data = db.exec(smt).all()
         print(len(exist_data))
+        
         k = 0
         for temp in exist_data:
+            print(temp.unique_id)
             # 查询具体配置
             smt_one = select(ListTask).where(ListTask.id == temp.unique_id)
             exist_one = db.exec(smt_one).one_or_none()
@@ -78,7 +80,7 @@ def update_main_classify():
                 # 序列化列表参数
                 if int(exist_one.tag) == 1:
                     temp_main_classify = exist_one.main_classify
-                    temp.main_classify = temp_main_classify
+                    temp.main_classify = temp_main_classify if str(temp_main_classify) in ["政治",'军事',"社会","经济"] else "社会"
                     db.add(temp)
             k += 1
             if k%10 ==0:
