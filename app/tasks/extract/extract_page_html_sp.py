@@ -107,6 +107,7 @@ def extract(data):
                     exist_data.feature_state = 0
                     exist_data.country_state = 0
                     exist_data.extract_country = ""
+                    exist_data.edit_state = 0
                     exist_data.create_time = datetime.now()
                     exist_data.update_time = datetime.now()
 
