@@ -48,8 +48,9 @@ def exchange_dataframe(data, columns):
     html = "<table><thead><tr>{}</tr></thead><tbody>"
     c_html = ""
     for i in columns_map.values():
-        temp = "<th>{}</th>".format(i)
-        c_html += temp
+        if i != "标题翻译":
+            temp = "<th>{}</th>".format(i)
+            c_html += temp
     html = html.format(c_html)
 
     for i in data.values:
