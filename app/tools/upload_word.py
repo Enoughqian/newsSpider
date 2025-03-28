@@ -208,10 +208,13 @@ def inner_upload(origin_data, upload_pic_content):
                         state = 0
                         pic_path = ""
             if state:
-                pic_paragraph = doc.add_paragraph()
-                pic_run = pic_paragraph.add_run()
-                pic_run.add_picture(pic_path, width=Inches(6))
-                os.remove(pic_path)
+                try:
+                    pic_paragraph = doc.add_paragraph()
+                    pic_run = pic_paragraph.add_run()
+                    pic_run.add_picture(pic_path, width=Inches(6))
+                    os.remove(pic_path)
+                except:
+                    continue
             split_paragraph = doc.add_paragraph()
             split_paragraph.add_run("\n")
     # 市场数据
@@ -341,10 +344,13 @@ def outter_upload(origin_data):
                         state = 0
                         pic_path = ""
             if state:
-                pic_paragraph = doc.add_paragraph()
-                pic_run = pic_paragraph.add_run()
-                pic_run.add_picture(pic_path, width=Inches(6))
-                os.remove(pic_path)
+                try:
+                    pic_paragraph = doc.add_paragraph()
+                    pic_run = pic_paragraph.add_run()
+                    pic_run.add_picture(pic_path, width=Inches(6))
+                    os.remove(pic_path)
+                except:
+                    continue
             split_paragraph = doc.add_paragraph()
             split_paragraph.add_run("\n")
 
