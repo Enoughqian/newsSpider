@@ -59,27 +59,19 @@ def upload_page():
     st.session_state.have_opt = 0
 
     st.markdown("<h1 style='font-size: 30px;'>筛选条件</h1>", unsafe_allow_html=True)
-
-    # 国家筛选
-    country_filter = st.text_input("国家 (输入国家名，可选)", value=None)
     
     # 发布时间筛选
-    publish_date_filter = st.date_input("选择发布时间 (可选)", value=None)
+    refresh_date_filter = st.date_input("选择更新时间", value=None)
 
     # 关键词筛选
-    keyword_filter = st.text_input("关键词 (输入关键词，可选)", value=None)
-
-    # 主题筛选
-    topic_filter = st.text_input("主题词 (输入主题词，可选)", value=None)
+    keyword_filter = st.text_input("英文原文标题包含", value=None)
 
     filtered_news = []
 
     if st.button("确认筛选"):
         params = {
-            "country": country_filter,
-            "publishdate": publish_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
+            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if refresh_date_filter else None,
             "keyword": keyword_filter,
-            "topic": topic_filter
         }
     
         # 发送请求获取数据
@@ -158,6 +150,11 @@ def upload_page():
             # 显示当前右边方框的数据
             if st.button('删除模板最后一条数据', key='btn_delete_last'):
                 undo_last_right()  # 删除右边最后一条数据
+                st.rerun()
+            
+            if st.button('删除全部数据', key='btn_delete_add'):
+                for _ in range(len(st.session_state.right_data)):
+                    undo_last_right()
                 st.rerun()
 
             if st.session_state.right_data:

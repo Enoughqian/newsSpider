@@ -1,6 +1,13 @@
 from datetime import datetime
 from app.io.session import redis_client 
 import numpy as np
+import time
+from qcloud_cos import CosConfig
+from qcloud_cos import CosS3Client
+from app.config.env_config import settings
+import requests
+from loguru import logger
+from urllib.parse import urljoin
 
 # 函数：将 numpy 向量转换为 bytes
 def numpy_to_bytes(arr):
@@ -99,13 +106,45 @@ def exchange_date(date_str, mode):
         date_obj = datetime.now()
     return date_obj
 
+# 上传到cos
+def upload_to_cos(rb_content, path):
+    config = CosConfig(Region="ap-beijing", SecretId=settings.TENCENT_SECRETID, SecretKey=settings.TENCENT_SECRETKEY, Token=None, Scheme="https")
+    client = CosS3Client(config)
+
+    time.sleep(0.1)
+    try:
+        response = client.put_object(
+            Bucket = settings.TENCENT_BUCKET,
+            Body = rb_content,
+            Key = path,
+            StorageClass='STANDARD',
+            EnableMD5=False
+        )
+        state = response.get("ETag",None)
+        if state:
+            return urljoin("https://download-word-1258484232.cos.ap-beijing.myqcloud.com/", path)
+        else:
+            return None
+    except Exception as e:
+        logger.debug("上传腾讯云失败, 错误: "+str(e))
+        return None
+
 if __name__ == "__main__":
-    data = [
-        {"id":1},
-        {"id":12},
-        {"id":3},
-        {"id":13},
-        {"id":11}
-    ]
-    data = filter_lock_task(data, "list", 2, lock_time=5)
-    print(data)
+    # data = [
+    #     {"id":1},
+    #     {"id":12},
+    #     {"id":3},
+    #     {"id":13},
+    #     {"id":11}
+    # ]
+    # data = filter_lock_task(data, "list", 2, lock_time=5)
+    # print(data)
+    import requests
+    url = "http://gips0.baidu.com/it/u=1690853528,2506870245&fm=3028&app=3028&f=JPEG&fmt=auto?w=1024&h=1024"
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
+    }
+    response = requests.get(url)
+    rb_content = response.content
+    result = upload_to_cos(rb_content, "demo.jpg")
+    print(result)

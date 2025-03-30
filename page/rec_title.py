@@ -172,11 +172,11 @@ def rec_title():
     # 更新时间筛选
     refresh_date_filter = st.date_input("选择更新时间(可选)", value=None)
 
-    # 中文标题关键词
-    china_keyword_filter = st.text_input("中文标题关键词(输入关键词)", value=None)
-
     # 英文标题关键词
-    keyword_filter = st.text_input("英文标题关键词(输入关键词)", value=None)
+    keyword_filter = st.text_input("原文标题包含", value=None)
+
+    # 中文标题关键词
+    china_keyword_filter = st.text_input("中文标题包含", value=None)
 
     # 确认按钮
     if st.button("确认筛选", key="rec_filter_button_1"):

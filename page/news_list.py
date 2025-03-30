@@ -112,25 +112,25 @@ def news_list():
     )
 
     # 发布时间筛选
-    publish_date_filter = st.date_input("选择发布时间", value=None)
+    publish_date_filter = st.date_input("选择文章发布时间", value=None)
 
     # 更新时间筛选
-    refresh_date_filter = st.date_input("选择更新时间", value=None)
+    refresh_date_filter = st.date_input("选择抓取入库时间", value=None)
 
     # 标题包含筛选
-    title_keyword_filter = st.text_input("标题包含", value=None)
+    title_keyword_filter = st.text_input("英文标题包含", value=None)
 
     # 标题翻译包含筛选
-    title_translate_keyword_filter = st.text_input("标题翻译包含", value=None)
+    title_translate_keyword_filter = st.text_input("中文标题包含", value=None)
 
     # 原文包含筛选
-    content_keyword_filter = st.text_input("原文包含", value=None)
+    content_keyword_filter = st.text_input("英文原文包含", value=None)
 
     # 原文翻译包含筛选
-    content_translate_keyword_filter = st.text_input("原文翻译包含", value=None)
+    content_translate_keyword_filter = st.text_input("中文原文包含", value=None)
     
     # 关键词筛选
-    contain_keyword_filter = st.text_input("关键词包含", value=None)
+    contain_keyword_filter = st.text_input("中文关键词包含", value=None)
 
     # 确认按钮
     '''

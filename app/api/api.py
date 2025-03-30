@@ -12,6 +12,7 @@ from app.api.endpoints import (
     filterTask,
     getCountry,
     getCountData,
+    genWordFile,
     test
 )
 
@@ -28,4 +29,5 @@ api_router.include_router(filterUpload.router, tags=["filterUpload"])
 api_router.include_router(filterTask.router, tags=["filterTask"])
 api_router.include_router(getCountry.router, tags=["getCountry"])
 api_router.include_router(getCountData.router, tags=["getCountData"])
+api_router.include_router(genWordFile.router, tags=["genWordFile"])
 api_router.include_router(test.router, tags = ["test"])

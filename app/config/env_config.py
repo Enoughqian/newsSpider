@@ -32,6 +32,10 @@ class Config(BaseSettings):
     CELERY_CRAWL_BROKEN_URL: str = os.getenv('CELERY_CRAWL_BROKEN_URL')
     CELERY_CRAWL_RESULT_BACKEND: str = os.getenv('CELERY_CRAWL_RESULT_BACKEND')
 
+    TENCENT_SECRETID: str = os.getenv('TENCENT_SECRETID')
+    TENCENT_SECRETKEY: str = os.getenv('TENCENT_SECRETKEY')
+    TENCENT_BUCKET: str = os.getenv('TENCENT_BUCKET')
+
     # 配置前端展示页数
     NEWS_PER_PAGE: int = os.getenv("NEWS_PER_PAGE")
     
@@ -39,8 +43,10 @@ class Config(BaseSettings):
     SERVER_HOST: str = os.getenv("SERVER_HOST")
     SERVER_PORT: str = os.getenv("SERVER_PORT")
     
+
     # 展示页面
     SERVER_SHOW_DETAIL_HOST: str = os.getenv("SERVER_SHOW_DETAIL_HOST")
     SERVER_SHOW_DETAIL_PORT: str = os.getenv("SERVER_SHOW_DETAIL_PORT")
+
     
 settings = Config()

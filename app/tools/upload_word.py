@@ -148,7 +148,7 @@ def inner_upload(origin_data, upload_pic_content):
 
     # 第三部分：强调文本
     emphasis_paragraph = doc.add_paragraph()
-    emphasis_run = emphasis_paragraph.add_run("声明：本文内容均直接采集自主要境外媒体，经过编译和整理。所有原文链接见iNORINCO附件，可电脑浏览器访问i.norinco.cn下载客户端或登陆网页版浏览原文.")
+    emphasis_run = emphasis_paragraph.add_run("声明：本文内容均直接采集自主要境外媒体，经过编译和整理。")
     emphasis_run.font.size = Pt(13)  # 字体大小设置为16磅
     emphasis_run.italic = True  # 设置为斜体
     emphasis_run.font.color.rgb = RGBColor(169, 177, 184)
@@ -198,7 +198,11 @@ def inner_upload(origin_data, upload_pic_content):
                     try:
                         if not os.path.exists("temp_pic"):
                             os.mkdir("temp_pic")
-                        temp_content = requests.get(url,timeout=2).content
+                        headers = {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
+                        }
+
+                        temp_content = requests.get(url, timeout=5, headers=headers).content
                         c_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
                         with open(c_pic_path,"wb") as f:
                             f.write(temp_content)
@@ -267,11 +271,7 @@ def outter_upload(origin_data):
 
     # 第一部分：标题
     title_paragraph = doc.add_paragraph()
-    title_run = title_paragraph.add_run("-每日外闻速览-")
-    title_run.font.size = Pt(40)  # 字体大小设置为28磅
-    title_run.bold = True  # 加粗
-    title_run.font.color.rgb = RGBColor(17, 76, 158)
-    title_paragraph.alignment = 1  # 居中
+    title_run = title_paragraph.add_run("@每日外闻速览")
 
     # 第二部分：增加日期描述
     years = str(datetime.now()).split(" ")[0].split("-")[0]
@@ -279,49 +279,31 @@ def outter_upload(origin_data):
     day = str(datetime.now()).split(" ")[0].split("-")[2]
 
     normal_paragraph = doc.add_paragraph()
-    normal_run = normal_paragraph.add_run("信息资源部{}年{}月{}日".format(years, month, day))
-    normal_run.font.size = Pt(14)  # 字体大小设置为12磅
-    normal_run.font.name = '黑体'
-    normal_paragraph.alignment = 1  # 居中
-
-    # 增加分割线
-    image_path = './element/pic1.png'  # 例如 'images/photo.jpg'
-    pic_paragraph = doc.add_paragraph()
-    pic_run = pic_paragraph.add_run()
-    pic_run.add_picture(image_path, width=Inches(6))
-    pic_paragraph.alignment = 1 
+    normal_run = normal_paragraph.add_run("*信息资源部{}年{}月{}日".format(years, month, day))
 
     # 第三部分：强调文本
     emphasis_paragraph = doc.add_paragraph()
-    emphasis_run = emphasis_paragraph.add_run("声明：本文内容均直接采集自主要境外媒体，经过编译和整理。所有原文链接见iNORINCO附件，可电脑浏览器访问i.norinco.cn下载客户端或登陆网页版浏览原文.")
-    emphasis_run.font.size = Pt(13)  # 字体大小设置为16磅
-    emphasis_run.italic = True  # 设置为斜体
-    emphasis_run.font.color.rgb = RGBColor(169, 177, 184)
+    emphasis_run = emphasis_paragraph.add_run(">声明：本文内容均直接采集自主要境外媒体，点击标题查看原文。")
     
     for topic, data_list in new_filter_data.items():
-        # 新增要闻展示
-        image_path = './element/split.jpg'
-        # 箭头+普通标题
         split_graph = doc.add_paragraph()
-        split_graph.alignment = 1  # 居中
-        split_graph.add_run().add_picture(image_path, width=Inches(0.1))
-        split_run = split_graph.add_run(str(topic) + "要闻")
-        split_run.font.size = Pt(16)
-        split_run.font.bold = True
-        split_run.font.name = '黑体'
-        split_graph.add_run().add_picture(image_path, width=Inches(0.1))
+        split_run = split_graph.add_run("#"+str(topic) + "要闻")
+
+        tag_graph = doc.add_paragraph()
+        tag_run = tag_graph.add_run("##")
 
         # 第四部分：添加
         for i in range(len(data_list)):
             temp_data = data_list[i]
             index = str(i+1)
+            t_graph = doc.add_paragraph()
+            t_run = t_graph.add_run("{}.{}".format(index, temp_data.title_translate))
 
-            image_path = './element/tag.jpg'
-            # 箭头+带超链接标题
-            p = doc.add_paragraph()
-            p.add_run().add_picture(image_path, width=Inches(0.25))
-            add_hyperlink(p, "http://152.32.218.226:9999/news_server/api/showNews?id={}".format(temp_data.id), "{}.{}".format(index, temp_data.title_translate), '0000EE', True, 18)
-            
+            p_graph = doc.add_paragraph()
+            link = "http://152.32.218.226:9999/news_server/api/showNews?id={}".format(temp_data.id)
+            add_hyperlink(p_graph, link, link,'000000', True, 12)
+            p_run = p_graph.add_run()
+
             # 图片下载
             state = 0
             pic_path = ""
@@ -334,13 +316,17 @@ def outter_upload(origin_data):
                     try:
                         if not os.path.exists("temp_pic"):
                             os.mkdir("temp_pic")
-                        temp_content = requests.get(url,timeout=2).content
+                        headers = {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
+                        }
+
+                        temp_content = requests.get(url, timeout=5, headers=headers).content
                         c_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
                         with open(c_pic_path,"wb") as f:
                             f.write(temp_content)
                         state = 1
                         pic_path = c_pic_path
-                    except:
+                    except Exception as e:
                         state = 0
                         pic_path = ""
             if state:
@@ -351,8 +337,6 @@ def outter_upload(origin_data):
                     os.remove(pic_path)
                 except:
                     continue
-            split_paragraph = doc.add_paragraph()
-            split_paragraph.add_run("\n")
 
     # 保存修改后的 Word 二进制数据
     doc.save(byte_io)

@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_cookies_manager import EncryptedCookieManager
 from app.config.env_config import settings
 import requests
+import time
 
 # 创建一个加密的 Cookie Manager
 cookies = EncryptedCookieManager(
@@ -64,8 +65,10 @@ else:
         title_translate = all_info.get("title_translate","")
         title_translate_input = st.text_area("标题翻译", title_translate, height=70)
         if st.button("改动标题翻译"):
-            data = {"translate": title_translate_input}
+            data = {"title_translate": title_translate_input}
             fetch_save(unique_id, data)
+            st.success("保存成功")
+            time.sleep(5)
             st.rerun()
         
         # 展示图片
@@ -88,6 +91,8 @@ else:
         if st.button("改动类别"):
             data = {"main_classify": selected_option}
             fetch_save(unique_id, data)
+            st.success("保存成功")
+            time.sleep(5)
             st.rerun()
 
         # 展示正文，可编辑
@@ -96,6 +101,8 @@ else:
         if st.button("改动原文"):
             data = {"content": content_input}
             fetch_save(unique_id, data)
+            st.success("保存成功")
+            time.sleep(5)
             st.rerun()
         
         # 展示翻译
@@ -104,6 +111,8 @@ else:
         if st.button("改动翻译"):
             data = {"translate": translate_input}
             fetch_save(unique_id, data)
+            st.success("保存成功")
+            time.sleep(5)
             st.rerun()
 
         # 展示编辑摘要
@@ -112,6 +121,8 @@ else:
         if st.button("改动摘要"):
             data = {"abstract": abstract_input}
             fetch_save(unique_id, data)
+            st.success("保存成功")
+            time.sleep(5)
             st.rerun()
         
         # 展示关键词
@@ -120,6 +131,8 @@ else:
         if st.button("改动关键词"):
             data = {"keyword": keyword_input}
             fetch_save(unique_id, data)
+            st.success("保存成功")
+            time.sleep(5)
             st.rerun()
         
         if cookies.get("permission", "NORMAL") == "ADMIN":
@@ -136,7 +149,8 @@ else:
                         "content": content_input
                     }
                     fetch_save(unique_id, data)
-                    st.success("数据提交成功！")
+                    st.success("数据推送成功！")
+                    time.sleep(5)
                     st.rerun()
     else:
         st.write("请提供项目 ID 以访问具体内容。")

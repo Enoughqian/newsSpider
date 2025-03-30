@@ -26,7 +26,7 @@ router = APIRouter(prefix="/filterUpload")
 '''
     国家: country
     主题: topic
-    发布时间: publishdate
+    更新时间: refreshdate
     关键词: keyword
 '''
 
@@ -61,7 +61,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
     # 主题在回调后田间到列表库中添加后面加
     try:
-        publishdate = rs.get("publishdate")
+        refreshdate = rs.get("refreshdate")
     except:
         return_format_json["err_code"] = 3
         return_format_json["msg"] = "输入页面参数错误"
@@ -82,11 +82,11 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         # 过滤条件
         if country is not None:
             filters.append(FormalNews.country.like(f"%{country}%"))
-        if publishdate is not None:
-            start_date = datetime.strptime(publishdate, "%Y-%m-%d").date()
+        if refreshdate is not None:
+            start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
-            filters.append(FormalNews.publish_date >= start_date)
-            filters.append(FormalNews.publish_date < end_date)
+            filters.append(FormalNews.update_time >= start_date)
+            filters.append(FormalNews.update_time < end_date)
         if keyword is not None:
             filters.append(ListTask.title.like(f"%{keyword}%"))
         if main_classify is not None:
