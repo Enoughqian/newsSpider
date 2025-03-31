@@ -115,7 +115,7 @@ def news_list():
     publish_date_filter = st.date_input("选择文章发布时间", value=None)
 
     # 更新时间筛选
-    refresh_date_filter = st.date_input("选择抓取入库时间", value=None)
+    refresh_date_filter = st.date_input("选择最后更新时间", value=None)
 
     # 标题包含筛选
     title_keyword_filter = st.text_input("英文标题包含", value=None)
