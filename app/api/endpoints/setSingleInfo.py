@@ -93,6 +93,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 if target_key == "main_classify":
                     temp_data.main_classify = target_content
                     temp_data.edit_state = 1
+                temp_data.update_time = datetime.now()
                 db.add(temp_data)
                 db.commit()
             else:
@@ -113,6 +114,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 temp_data.content = content
                 temp_data.title_translate = title_translate
                 temp_data.edit_state = 1
+                temp_data.update_time = datetime.now()
                 db.add(temp_data)
                 db.commit()
             else:
