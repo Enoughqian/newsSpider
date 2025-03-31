@@ -41,7 +41,6 @@ router = APIRouter(prefix="/filterList")
 '''
 # 接口连接
 @router.post("")
-
 async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     rs = await request.json()
     # 最后结果
