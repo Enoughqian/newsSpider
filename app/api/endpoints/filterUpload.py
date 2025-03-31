@@ -23,14 +23,6 @@ import re
 
 router = APIRouter(prefix="/filterUpload")
 
-'''
-    国家: country
-    主题: topic
-    更新时间: refreshdate
-    关键词: keyword
-'''
-
-
 def expand_data(data):
     result = [] 
     for i in data:     
@@ -59,7 +51,13 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         "msg": ""
     }
 
-    # 主题在回调后田间到列表库中添加后面加
+    '''
+        更新时间: refreshdate
+        主题: topic
+        中文标题包含: title_translate_keyword    title_translate
+        关键词包含: contain_keyword            keyword
+    '''
+
     try:
         refreshdate = rs.get("refreshdate")
     except:
@@ -68,10 +66,10 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         return return_format_json
     
     # 取数据
-    country = rs.get("country", None)
-    keyword = rs.get("keyword",None)
-    main_classify = rs.get("topic", None)
-
+    topic = rs.get("topic", [])
+    title_translate_keyword = rs.get("title_translate_keyword", None)
+    contain_keyword = rs.get("contain_keyword",None)
+    
     try:
         # 过滤
         filters = []
@@ -80,17 +78,22 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         statement = select(FormalNews)
 
         # 过滤条件
-        if country is not None:
-            filters.append(FormalNews.country.like(f"%{country}%"))
         if refreshdate is not None:
             start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
             filters.append(FormalNews.update_time >= start_date)
             filters.append(FormalNews.update_time < end_date)
-        if keyword is not None:
-            filters.append(ListTask.title.like(f"%{keyword}%"))
-        if main_classify is not None:
-            filters.append(FormalNews.main_classify == main_classify)
+        
+        if title_translate_keyword is not None:
+            filters.append(FormalNews.title_translate.like(f"%{title_translate_keyword}%"))
+        
+        if contain_keyword is not None:
+            filters.append(FormalNews.keyword.like(f"%{contain_keyword}%"))
+        
+        # 过滤主题
+        if topic:
+            filters.append(or_(*[FormalNews.main_classify.like(f"%{temp_topic}%") for temp_topic in topic]))
+
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)

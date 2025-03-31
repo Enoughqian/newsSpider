@@ -60,18 +60,36 @@ def upload_page():
 
     st.markdown("<h1 style='font-size: 30px;'>筛选条件</h1>", unsafe_allow_html=True)
     
+    '''
+        更新时间: refreshdate
+        主题: topic
+        中文标题包含: title_translate_keyword    title_translate
+        关键词包含: contain_keyword            keyword
+    '''
+
     # 发布时间筛选
     refresh_date_filter = st.date_input("选择更新时间", value=None)
 
-    # 关键词筛选
-    keyword_filter = st.text_input("英文原文标题包含", value=None)
+    # 请选择类别
+    topic_filter = st.multiselect(
+        "选择主题(可多选)",
+        ["社会","政治","军事","经济"]
+    )
+
+    # 中文关键词筛选
+    title_translate_keyword_filter = st.text_input("中文标题包含", value=None)
+
+    # 关键词包含
+    contain_keyword_filter = st.text_input("中文关键词包含", value=None)
 
     filtered_news = []
 
     if st.button("确认筛选"):
         params = {
             "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if refresh_date_filter else None,
-            "keyword": keyword_filter,
+            "topic": topic_filter,
+            "title_translate_keyword": title_translate_keyword_filter,
+            "contain_keyword": contain_keyword_filter
         }
     
         # 发送请求获取数据
@@ -84,6 +102,8 @@ def upload_page():
 
             if 'right_data' not in st.session_state:
                 st.session_state.right_data = []
+        else:
+            st.warning("没有符合条件的新闻。")
     
     if len(st.session_state.left_data_1) or len(st.session_state.left_data_2) or len(st.session_state.left_data_3) or len(st.session_state.left_data_4) or st.session_state.have_opt == 0:
         st.markdown("<h1 style='font-size: 30px;'>生成word文件排序调整</h1>", unsafe_allow_html=True)

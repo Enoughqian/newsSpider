@@ -113,7 +113,10 @@ def inner_upload(origin_data, upload_pic_content):
     if not os.path.exists("temp_word"):
         os.mkdir("temp_word")
     file_name = "".join(str(datetime.now()).split(".")[0].replace("-", " ").replace(":"," ").split(" ")[:6])
-    output_file = "外网新闻-"+ file_name +".docx"
+    years = str(datetime.now()).split("-")[0]
+    month = str(datetime.now()).split("-")[1]
+    day = str(datetime.now()).split(" ")[0].split("-")[2]
+    output_file = "每日外闻速览{}年{}月{}日-".format(years, month, day) + file_name +".docx"
     pypandoc.convert_text("", 'docx', format='md', outputfile=output_file)
 
     # 返回二进制word数据和文件名称

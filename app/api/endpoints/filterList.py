@@ -128,7 +128,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         
         # 标题翻译关键词
         if title_translate_keyword:
-            filters.append(NewsDetail.title.like(f"%{title_translate_keyword}%"))
+            filters.append(NewsDetail.title_translate.like(f"%{title_translate_keyword}%"))
 
         # 内容关键词
         if content_keyword:
@@ -140,7 +140,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         
         # 包含关键词
         if contain_keyword:
-            filters.append(NewsDetail.translate.like(f"%{contain_keyword}%"))
+            filters.append(NewsDetail.keyword.like(f"%{contain_keyword}%"))
         
         # 生成状态判断
         if abstract_state is not None:

@@ -93,7 +93,7 @@ def show_floating_window():
         }
         </style>
         <div class="floating-window">
-            <p>今日上传正式数量: NUM</p>
+            <p>今日上传生成数量: NUM</p>
         </div>
     """.replace("NUM",str(data[0]["format_news_num"])), unsafe_allow_html=True)
 
