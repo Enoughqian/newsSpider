@@ -44,6 +44,8 @@ def extract(data):
             # 拼接url
             result["链接"] = result["链接"].apply(lambda x: x if "http" in x else urljoin(domain, x))
             result = result.drop_duplicates(subset=["链接"], keep="first", inplace=False)
+            # https://www.miningweekly.com/article/black-cat-and-westgold-complete-lakewood-deal-2025-04-01
+            result["标题"] = result["链接"].apply(lambda x: " ".join(str(x).split("www.miningweekly.com/article/")[1].split("-")[:-3]))
             
             with Session(engine, autoflush=False) as db:
                 insert_list = []

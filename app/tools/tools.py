@@ -102,8 +102,21 @@ def exchange_date(date_str, mode):
     if mode == 8:
         date_str = date_str.split("-")[0].strip()
         date_obj = datetime.strptime(date_str, "%d.%m.%Y")
+    if mode == 9:
+        date_str = date_str.split("|")[0].strip().replace(",","").replace("&nbsp; ","")
+        for k,v in month_map.items():
+            if date_str.split(" ")[1] in k:
+                date_str = date_str.replace(date_str.split(" ")[1], v)
+                date_obj = datetime.strptime(date_str, "%d %m %Y")
+    if mode == 10:
+        date_str = date_str.split("By")[0].strip().replace(",","").replace("th","").replace("st","").replace("nd","").replace("rd","")
+        for k,v in month_map.items():
+            if date_str.split(" ")[1] in k:
+                date_str = date_str.replace(date_str.split(" ")[1], v)
+                date_obj = datetime.strptime(date_str, "%d %m %Y")
     if not date_obj:
         date_obj = datetime.now()
+    
     return date_obj
 
 # 上传到cos
