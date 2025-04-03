@@ -14,7 +14,7 @@ from app.model.formal_news import FormalNews
 from app.tools.tools import filter_lock_task,numpy_to_bytes,bytes_to_numpy
 from loguru import logger
 from sqlmodel import Session, select, update, func, or_
-from app.tools import upload_to_cos
+from app.tools.tools import upload_to_cos
 from datetime import datetime
 import json
 import requests
@@ -162,9 +162,9 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 response = requests.get(temp_pic_set)
                 rb_data = response.content
                 path = "upload_image/{}.jpg".format(temp_id)
-                link = upload_to_cos(rb_data, path)
-                if link:
-                    temp_pic_set = link
+                link_str = upload_to_cos(rb_data, path)
+                if link_str:
+                    temp_pic_set = link_str
                 else:
                     temp_pic_set = ""
             except:
@@ -194,7 +194,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             db.add(temp_data)
             db.commit()
 
-    except:
+    except Exception as e:
         return_format_json["msg"] = "处理失败!"
         return_format_json["err_code"] = 6
     return return_format_json
