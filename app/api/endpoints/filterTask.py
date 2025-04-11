@@ -111,7 +111,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     try:
         # 筛选条件
         if filters:
-            statement = statement.where(*filters)
+            statement = statement.where(*filters).order_by(ListTask.update_time.desc())
             
         statement = statement.offset(offset).limit(num)
         count_statement = select(func.count(ListTask.id)).where(*filters) if filters else select(func.count(ListTask.id))

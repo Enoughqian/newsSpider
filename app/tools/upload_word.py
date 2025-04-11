@@ -13,6 +13,7 @@ import docx
 from docx import Document
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+from docx.enum.text import WD_LINE_SPACING
 
 # class data:
 #     title = "Poll suspects local official involvement"
@@ -126,9 +127,11 @@ def inner_upload(origin_data, upload_pic_content):
     # 第一部分：标题
     title_paragraph = doc.add_paragraph()
     title_run = title_paragraph.add_run("-每日外闻速览-")
-    title_run.font.size = Pt(40)  # 字体大小设置为28磅
+    title_run.font.size = Pt(34)  # 字体大小设置为28磅
+    title_run.font.name = '黑体'
     title_run.bold = True  # 加粗
     title_run.font.color.rgb = RGBColor(17, 76, 158)
+    title_run.font.bold = True
     title_paragraph.alignment = 1  # 居中
 
     # 第二部分：增加日期描述
@@ -140,6 +143,7 @@ def inner_upload(origin_data, upload_pic_content):
     normal_run = normal_paragraph.add_run("信息资源部{}年{}月{}日".format(years, month, day))
     normal_run.font.size = Pt(14)  # 字体大小设置为12磅
     normal_run.font.name = '黑体'
+    normal_run.font.bold = True
     normal_paragraph.alignment = 1  # 居中
 
     # 增加分割线
@@ -154,7 +158,9 @@ def inner_upload(origin_data, upload_pic_content):
     emphasis_run = emphasis_paragraph.add_run("声明：本文内容均直接采集自主要境外媒体，经过编译和整理。")
     emphasis_run.font.size = Pt(13)  # 字体大小设置为16磅
     emphasis_run.italic = True  # 设置为斜体
+    emphasis_run.font.name = '等线'
     emphasis_run.font.color.rgb = RGBColor(169, 177, 184)
+    emphasis_paragraph.paragraph_format.space_after = Pt(20)
 
     for topic, origin_data in new_filter_data.items():
         # 新增要闻展示
@@ -164,7 +170,7 @@ def inner_upload(origin_data, upload_pic_content):
         split_graph.alignment = 1  # 居中
         split_graph.add_run().add_picture(image_path, width=Inches(0.1))
         split_run = split_graph.add_run(topic)
-        split_run.font.size = Pt(16)
+        split_run.font.size = Pt(18)
         split_run.font.bold = True
         split_run.font.name = '黑体'
         split_graph.add_run().add_picture(image_path, width=Inches(0.1))
@@ -179,15 +185,37 @@ def inner_upload(origin_data, upload_pic_content):
             title_graph = doc.add_paragraph()
             title_graph.add_run().add_picture(image_path, width=Inches(0.25))
             title_run = title_graph.add_run("{}.{}".format(index, temp_data.title_translate))
-            title_run.font.size = Pt(18)
+            title_run.font.size = Pt(15)
+            
             title_run.font.bold = True
             title_run.font.name = '黑体'
+            title_run.line_spacing = Pt(21)
 
-            # 内容
-            content_paragraph = doc.add_paragraph()
-            content_run = content_paragraph.add_run(str(temp_data.abstract).replace("\n","\n"))
-            content_run.font.size = Pt(16)
-            content_run.font.name = '黑体'
+            # # 内容
+            # content_paragraph = doc.add_paragraph()
+            # # content_paragraph.paragraph_format.space_before = Pt(15)
+
+            temp_ccc = str(temp_data.abstract).replace("\n","\n").split("\n")
+            for temp_i in range(len(temp_ccc)):
+                # 段前
+                temp_graph = doc.add_paragraph()
+                temp_c_run = temp_graph.add_run(temp_ccc[temp_i])
+                temp_graph.paragraph_format.space_before = Pt(15)
+                temp_c_run.font.size = Pt(15)  # 设置字体大小为16磅
+                temp_c_run.font.name = '黑体'  # 设置字体为黑体.
+                
+                temp_graph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY  # 设置为固定行距
+                temp_graph.paragraph_format.line_spacing = Pt(30)  # 设置行距为 30 磅
+
+                temp_graph.paragraph_format.space_after = Pt(15)
+
+            # content_run = content_paragraph.add_run(str(temp_data.abstract).replace("\n","\n"))
+            # content_run.font.size = Pt(15)
+            # content_paragraph.paragraph_format.space_before = Pt(15)  # 段前间距
+            # content_paragraph.paragraph_format.space_after = Pt(20)   # 段后间距
+
+            # content_paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY  # 设置为固定行距
+            # content_paragraph.paragraph_format.line_spacing = Pt(30)  # 设置行距为 30 磅
             
             # 图片下载
             state = 0
@@ -303,7 +331,7 @@ def outter_upload(origin_data):
             t_run = t_graph.add_run("{}.{}".format(index, temp_data.title_translate))
 
             p_graph = doc.add_paragraph()
-            link = "http://152.32.218.226:9999/news_server/api/showNews?id={}".format(temp_data.id)
+            link = "http://ideachorus.com/news_server/api/showNews?id={}".format(temp_data.id)
             add_hyperlink(p_graph, link, link,'000000', True, 12)
             p_run = p_graph.add_run()
 

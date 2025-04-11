@@ -159,14 +159,16 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
             # 下载图片
             try:
-                response = requests.get(temp_pic_set)
+                response = requests.get(temp_pic_set, timeout=5)
                 rb_data = response.content
-                path = "upload_image/{}.jpg".format(temp_id)
-                link_str = upload_to_cos(rb_data, path)
-                if link_str:
-                    temp_pic_set = link_str
-                else:
-                    temp_pic_set = ""
+                
+                if "html" not in str(response.text):
+                    path = "upload_image/{}.jpg".format(temp_id)
+                    link_str = upload_to_cos(rb_data, path)
+                    if link_str:
+                        temp_pic_set = link_str
+                    else:
+                        temp_pic_set = ""
             except:
                 temp_pic_set = ""
                 
