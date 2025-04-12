@@ -107,6 +107,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             keyword = data["keyword"]
             title_translate = data["title_translate"]
             content = data["content"]
+            pic_set = str(data["pic_set"])
 
             if temp_data:
                 temp_data.abstract = abstract
@@ -116,6 +117,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 temp_data.title_translate = title_translate
                 temp_data.edit_state = 1
                 temp_data.update_time = datetime.now()
+                temp_data.pic_set = pic_set if "http" in pic_set else ""
                 db.add(temp_data)
                 db.commit()
             else:

@@ -24,11 +24,6 @@ router = APIRouter(prefix="/getCountData")
 # 接口连接
 @router.get("")  
 async def endpoint(ctype = 1, db: Session = Depends(deps.get_db), ):
-    return_format_json = {
-        "data": [],
-        "err_code": 0,
-        "msg": "获取成功!"
-    }
     '''
     datestr
     spider_platform_num
@@ -40,11 +35,11 @@ async def endpoint(ctype = 1, db: Session = Depends(deps.get_db), ):
     update_time
     '''
 
-    result = {"data": [], "err_code": 0, "msg": "成功!"}
+    result = {"date_info": [], "sum_info": None, "err_code": 0, "msg": "成功!"}
 
     if str(ctype) == "1":
         try:
-            # 查询
+            # 查询近7天的数据
             smt = select(CountInfo).order_by(CountInfo.update_time.desc()).limit(7)
             all_data = db.exec(smt).all()
 
@@ -65,7 +60,20 @@ async def endpoint(ctype = 1, db: Session = Depends(deps.get_db), ):
                     "format_news_num": temp_format_news_num,
                     "cost": temp_cost
                 }
-                result["data"].append(temp)
+                result["date_info"].append(temp)
+            # 查询总数据
+            smt = select(CountInfo).where(CountInfo.datestr == "1000-01-01")
+            sum_data = db.exec(smt).one_or_none()
+            if sum_data:
+                temp = {
+                    "spider_platform_num": sum_data.spider_platform_num,
+                    "spider_title_num": sum_data.spider_title_num,
+                    "useful_title_num": sum_data.useful_title_num,
+                    "spider_news_num": sum_data.spider_news_num,
+                    "format_news_num": sum_data.format_news_num,
+                    "cost": sum_data.cost
+                }
+                result["sum_info"] = temp
         except Exception as e:
             result["err_code"] = 1
             result["msg"] = "报错: "+ str(e)

@@ -134,6 +134,44 @@ def update_count():
                 db.add(temp_data)
                 # 更新
                 db.commit()
+        # 统计总的数量
+        count_info_smt = select(CountInfo).where(
+            CountInfo.datestr != "1000-01-01"
+        )
+        count_info_data = db.exec(count_info_smt).all()
+        # 计数
+        temp_spider_platform_list = [temp.spider_platform_num for temp in count_info_data]
+        temp_spider_title_list = [temp.spider_title_num for temp in count_info_data]
+        temp_useful_title_list = [temp.useful_title_num for temp in count_info_data]
+        temp_spider_news_list = [temp.spider_news_num for temp in count_info_data]
+        temp_format_news_list = [temp.format_news_num for temp in count_info_data]
+        temp_cost = [temp.cost for temp in count_info_data]
+
+        # 更新数据
+        update_news_smt = select(CountInfo).where(CountInfo.datestr == "1000-01-01")
+        update_news_data = db.exec(update_news_smt).one_or_none()
+        # 求总数
+        spider_platform_all = max(temp_spider_platform_list)
+        spider_title_all = sum(temp_spider_title_list)
+        useful_title_all = sum(temp_useful_title_list)
+        spider_news_all = sum(temp_spider_news_list)
+        format_news_all = sum(temp_format_news_list)
+        cost_all = sum(temp_cost)
+        if not update_news_data:
+            update_news_data = CountInfo()
+        # 入库
+        update_news_data.datestr = "1000-01-01"
+        update_news_data.spider_platform_num = spider_platform_all
+        update_news_data.spider_title_num = spider_title_all
+        update_news_data.useful_title_num = useful_title_all
+        update_news_data.spider_news_num = spider_news_all
+        update_news_data.format_news_num = format_news_all
+        update_news_data.cost = cost_all
+        update_news_data.update_time = datetime.strptime("1000-01-01", '%Y-%m-%d')
+
+        # 更新
+        db.add(update_news_data)
+        db.commit()
        
 if __name__ == "__main__":
     update_count()
