@@ -14,6 +14,7 @@ from app.api.endpoints import (
     getCountData,
     genWordFile,
     Login,
+    getShowNews,
     test
 )
 
@@ -32,4 +33,5 @@ api_router.include_router(getCountry.router, tags=["getCountry"])
 api_router.include_router(getCountData.router, tags=["getCountData"])
 api_router.include_router(genWordFile.router, tags=["genWordFile"])
 api_router.include_router(Login.router, tags=["Login"])
+api_router.include_router(getShowNews.router, tags=["getShowNews"])
 api_router.include_router(test.router, tags = ["test"])
