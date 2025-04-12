@@ -52,20 +52,37 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     }
 
     '''
-        更新时间: refreshdate
+        更新时间: refreshstartdate refreshenddate
         主题: topic
         中文标题包含: title_translate_keyword    title_translate
         关键词包含: contain_keyword            keyword
     '''
 
     try:
-        refreshdate = rs.get("refreshdate")
+        # 更新起始时间
+        refreshstartdate = rs.get("refreshstartdate", None)
+        # 更新结束时间
+        refreshenddate = rs.get("refreshenddate", None)
     except:
         return_format_json["err_code"] = 3
         return_format_json["msg"] = "输入页面参数错误"
         return return_format_json
     
     # 取数据
+    if refreshstartdate and refreshenddate:
+        t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
+        t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date()
+    elif refreshstartdate and not refreshenddate:
+        t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
+        t_end_date = t_mid_date + timedelta(days=1)
+    elif not refreshstartdate and refreshenddate:
+        t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date()
+        t_start_date = t_end_date - timedelta(days=1)
+    else:
+        t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
+        t_start_date = t_mid_date - timedelta(days=1)
+        t_end_date = t_mid_date + timedelta(days=1)
+
     topic = rs.get("topic", [])
     title_translate_keyword = rs.get("title_translate_keyword", None)
     contain_keyword = rs.get("contain_keyword",None)
@@ -78,11 +95,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         statement = select(FormalNews)
 
         # 过滤条件
-        if refreshdate is not None:
-            start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
-            end_date = start_date + timedelta(days=1)
-            filters.append(FormalNews.update_time >= start_date)
-            filters.append(FormalNews.update_time < end_date)
+        filters.append(FormalNews.update_time >= t_start_date)
+        filters.append(FormalNews.update_time <= t_end_date)
         
         if title_translate_keyword is not None:
             filters.append(FormalNews.title_translate.like(f"%{title_translate_keyword}%"))

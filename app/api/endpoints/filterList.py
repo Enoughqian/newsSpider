@@ -31,8 +31,10 @@ router = APIRouter(prefix="/filterList")
         edit_state
     国家: country
     主题: topic
-    发布时间: publishdate
-    更新时间: refreshdate
+    发布时间开始: publishstartdate
+    发布时间结束: publishenddate
+    更新时间开始: refreshstartdate
+    更新时间结束: refreshenddate
     标题关键词: title_keyword
     标题翻译关键词: title_translate_keyword
     原文关键词: content_keyword
@@ -63,16 +65,22 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     # 取数据
     country = rs.get("country", [])
     topic = rs.get("topic", [])
-    publishdate = rs.get("publishdate", None)
-    refreshdate = rs.get("refreshdate", None)
-    
+    # 发布起始时间
+    publishstartdate = rs.get("publishstartdate", None)
+    # 发布结束时间
+    publishenddate = rs.get("publishenddate", None)
+
+    # 更新起始时间
+    refreshstartdate = rs.get("refreshstartdate", None)
+    # 更新结束时间
+    refreshenddate = rs.get("refreshenddate", None)
+
     state = rs.get("state", None)
     title_keyword = rs.get("title_keyword", None)
     title_translate_keyword = rs.get("title_translate_keyword", None)
     content_keyword = rs.get("content_keyword", None)
     content_translate_keyword = rs.get("content_translate_keyword", None)
     contain_keyword = rs.get("contain_keyword", None)
-
     offset = (page - 1) * num
 
     '''
@@ -84,6 +92,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     try:
         abstract_state = None
         edit_state = None
+
         if state == "已抓取未生成":
             abstract_state = 0
         elif state == "已生成未处理":
@@ -92,6 +101,12 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         elif state == "运营已处理":
             abstract_state = 1
             edit_state = 1
+        elif state == "已推送正式库":
+            edit_state = 2
+        else:
+            # 默认值是已生成未处理
+            abstract_state = 1
+            edit_state = 0
 
         # 过滤
         filters = []
@@ -108,18 +123,48 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             filters.append(or_(*[NewsDetail.main_classify.like(f"%{temp_topic}%") for temp_topic in topic]))
         
         # 发布时间
-        if publishdate:
-            start_date = datetime.strptime(publishdate, "%Y-%m-%d").date()
+        date_state = 0
+
+        # publishstartdate publishenddate
+        if publishstartdate and publishenddate:
+            start_date = datetime.strptime(publishstartdate, "%Y-%m-%d").date()
+            end_date = datetime.strptime(publishenddate, "%Y-%m-%d").date()
+            date_state = 1
+        elif publishstartdate and not publishenddate:
+            start_date = datetime.strptime(publishstartdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
-            filters.append(NewsDetail.publish_date >= start_date)
-            filters.append(NewsDetail.publish_date < end_date)
-        
+            date_state = 1
+        elif not publishstartdate and publishenddate:
+            end_date = datetime.strptime(publishenddate, "%Y-%m-%d").date()
+            start_date = end_date - timedelta(days=1)
+            date_state = 1
+        else:
+            mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
+            end_date = mid_date - timedelta(days=1)
+            end_date = mid_date + timedelta(days=1)
+
         # 更新时间
-        if refreshdate:
-            start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
-            end_date = start_date + timedelta(days=1)
-            filters.append(NewsDetail.update_time >= start_date)
-            filters.append(NewsDetail.update_time < end_date)
+        # refreshstartdate refreshenddate
+        if refreshstartdate and refreshenddate:
+            t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
+            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date()
+        elif refreshstartdate and not refreshenddate:
+            t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
+            t_end_date = t_mid_date + timedelta(days=1)
+        elif not refreshstartdate and refreshenddate:
+            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date()
+            t_start_date = t_end_date - timedelta(days=1)
+        else:
+            t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
+            t_start_date = t_mid_date - timedelta(days=1)
+            t_end_date = t_mid_date + timedelta(days=1)
+
+        if date_state == 1:
+            filters.append(NewsDetail.publish_date >= start_date)
+            filters.append(NewsDetail.publish_date <= end_date)
+        if date_state == 0:
+            filters.append(NewsDetail.update_time >= t_start_date)
+            filters.append(NewsDetail.update_time <= t_end_date)
         
         # 标题原文关键词
         if title_keyword:
@@ -147,7 +192,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         
         # 编辑状态判断
         if edit_state is not None:
-            filters.append(NewsDetail.edit_state == edit_state)
+            filters.append(NewsDetail.edit_state >= edit_state)
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)

@@ -95,7 +95,7 @@ def news_list():
     # 状态筛选
     state_filter = st.selectbox(
         "选择状态 (单选)",
-        options=["已生成未处理", "已抓取未生成", "运营已处理"],
+        options=["已生成未处理", "已抓取未生成", "运营已处理","已推送正式库"],
         index = 0
     )
     

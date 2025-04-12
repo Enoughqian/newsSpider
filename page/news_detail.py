@@ -28,7 +28,7 @@ def fetch_save(unique_id, data):
         settings.SERVER_PORT
     )
     response = requests.post(url+"?unique_id={}".format(unique_id), json={"id": unique_id,"data": data})
-    result = response.json()
+    result = response.text
     return result
 
 # 检查cookie
@@ -146,10 +146,14 @@ else:
                         "translate": translate_input,
                         "abstract": abstract_input,
                         "keyword": keyword_input,
-                        "content": content_input
+                        "content": content_input,
+                        "pic_set": pic_set
                     }
-                    fetch_save(unique_id, data)
-                    st.success("数据推送成功！")
+                    response_text = fetch_save(unique_id, data)
+                    if "处理成功" in response_text:
+                        st.success("数据推送成功！")
+                    else:
+                        st.error("数据推送失败！")
                     time.sleep(5)
                     st.rerun()
     else:
