@@ -192,7 +192,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         
         # 编辑状态判断
         if edit_state is not None:
-            filters.append(NewsDetail.edit_state >= edit_state)
+            filters.append(NewsDetail.edit_state == edit_state)
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)

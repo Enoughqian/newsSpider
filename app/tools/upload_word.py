@@ -82,6 +82,18 @@ def split_data(data_list):
             result[k.main_classify].append(k)
         else:
             result[k.main_classify] = [k]
+    new_result = {}
+    if "政治" in result.keys():
+        new_result["政治"] = result["政治"]
+    
+    if "军事" in result.keys():
+        new_result["军事"] = result["军事"]
+    
+    if "社会" in result.keys():
+        new_result["社会"] = result["社会"]
+    
+    if "经济" in result.keys():
+        new_result["经济"] = result["经济"]
     return result
 
 def split_data_by_main(data_list):
