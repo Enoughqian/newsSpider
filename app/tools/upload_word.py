@@ -285,7 +285,11 @@ def inner_upload(origin_data, upload_pic_content):
 '''
     外网: 标题和链接 20条左右 政治要闻、军事要闻
 '''
-def outter_upload(origin_data):
+def outter_upload(origin_data, upload_pic_content, ctype="国外域名"):
+    if str(ctype) == "国外域名":
+        link_base = "http://news.ideachorus.com/index.html?id={}"
+    else:
+        link_base = "http://150.158.25.36:8888/index.html?id={}"
     # 信息分类
     new_filter_data = split_data(origin_data)
 
@@ -331,7 +335,7 @@ def outter_upload(origin_data):
             t_run = t_graph.add_run("{}.{}".format(index, temp_data.title_translate))
 
             p_graph = doc.add_paragraph()
-            link = "http://ideachorus.com/news_server/api/showNews?id={}".format(temp_data.id)
+            link = link_base.format(temp_data.id)
             add_hyperlink(p_graph, link, link,'000000', True, 12)
             p_run = p_graph.add_run()
 
@@ -368,6 +372,20 @@ def outter_upload(origin_data):
                     os.remove(pic_path)
                 except:
                     continue
+    # 市场数据
+    f_split_graph = doc.add_paragraph()
+    f_split_run = f_split_graph.add_run("#市场数据")
+
+    # 处理上传图片
+    upload_pic_path = "temp_pic/"+str(time.time()).split(".")[0]+".jpg"
+    with open(upload_pic_path, "wb") as f:
+        f.write(upload_pic_content.getvalue())
+    
+    # 添加到最后
+    if os.path.exists(upload_pic_path):
+        pic_paragraph = doc.add_paragraph()
+        pic_run = pic_paragraph.add_run()
+        pic_run.add_picture(upload_pic_path, width=Inches(6))
 
     # 保存修改后的 Word 二进制数据
     doc.save(byte_io)

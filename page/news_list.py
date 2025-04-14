@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 import requests
 from app.config.env_config import settings
 
@@ -112,10 +113,40 @@ def news_list():
     )
 
     # 发布时间筛选
-    publish_date_filter = st.date_input("选择文章发布时间", value=None)
+    # 提示用户选择开始日期和结束日期
+    years = int(str(datetime.now()).split(" ")[0].split("-")[0])
+    months = int(str(datetime.now()).split("-")[1])
+    day_start = int(str(datetime.now() - timedelta(days=1)).split(" ")[0].split("-")[2])
+    day_end = int(str(datetime.now()).split(" ")[0].split("-")[2])
 
-    # 更新时间筛选
-    refresh_date_filter = st.date_input("选择最后更新时间", value=None)
+    publish_date_range = st.date_input(
+        "选择文章发布时间",
+        [date(years, months, day_start), date(years, months, day_end)],
+        min_value = date(2024, 1, 1),
+        max_value = date(2030, 12, 31)
+    )
+
+    # 确保选择了两个日期
+    if len(publish_date_range) == 2:
+        publish_start_date, publish_end_date = publish_date_range
+        publish_start_date = str(publish_start_date)
+        publish_end_date = str(publish_end_date)
+    
+    refresh_date_range = st.date_input(
+        "选择最后更新时间",
+        [date(years, months, day_start), date(years, months, day_end)],
+        min_value = date(2024, 1, 1),
+        max_value = date(2030, 12, 31)
+    )
+
+    # 确保选择了两个日期
+    if len(refresh_date_range) == 2:
+        refresh_start_date, refresh_end_date = refresh_date_range
+        refresh_start_date = str(refresh_start_date)
+        refresh_end_date = str(refresh_end_date)
+
+    # publish_date_filter = st.date_input("选择文章发布时间", value=None)
+    # refresh_date_filter = st.date_input("选择最后更新时间", value=None)
 
     # 标题包含筛选
     title_keyword_filter = st.text_input("英文标题包含", value=None)
@@ -149,8 +180,10 @@ def news_list():
         params = {
             "state": state_filter,
             "country": country_filter,
-            "publishdate": publish_date_filter.strftime("%Y-%m-%d") if publish_date_filter else None,
-            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if refresh_date_filter else None,
+            "publishstartdate": publish_start_date,
+            "publishenddate": publish_end_date,
+            "refreshstartdate": refresh_start_date,
+            "refreshenddate": refresh_end_date,
             "title_keyword": title_keyword_filter if title_keyword_filter else None,
             "title_translate_keyword": title_translate_keyword_filter if title_translate_keyword_filter else None,
             "content_keyword": content_keyword_filter if content_keyword_filter else None,

@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta, date
 import requests
 from app.config.env_config import settings
 from app.tools.upload_word import get_data_from_db, inner_upload, outter_upload
@@ -68,7 +68,23 @@ def upload_page():
     '''
 
     # 发布时间筛选
-    refresh_date_filter = st.date_input("选择更新时间", value=None)
+    years = int(str(datetime.now()).split(" ")[0].split("-")[0])
+    months = int(str(datetime.now()).split("-")[1])
+    day_start = int(str(datetime.now() - timedelta(days=1)).split(" ")[0].split("-")[2])
+    day_end = int(str(datetime.now()).split(" ")[0].split("-")[2])
+
+    refresh_date_range = st.date_input(
+        "选择更新时间",
+        [date(years, months, day_start), date(years, months, day_end)],
+        min_value = date(2024, 1, 1),
+        max_value = date(2030, 12, 31)
+    )
+
+    # 确保选择了两个日期
+    if len(refresh_date_range) == 2:
+        refresh_start_date, refresh_end_date = refresh_date_range
+        refresh_start_date = str(refresh_start_date)
+        refresh_end_date = str(refresh_end_date)
 
     # 请选择类别
     topic_filter = st.multiselect(
@@ -86,7 +102,8 @@ def upload_page():
 
     if st.button("确认筛选"):
         params = {
-            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if refresh_date_filter else None,
+            "refreshstartdate": refresh_start_date,
+            "refreshenddate": refresh_end_date,
             "topic": topic_filter,
             "title_translate_keyword": title_translate_keyword_filter,
             "contain_keyword": contain_keyword_filter
@@ -184,14 +201,29 @@ def upload_page():
         
         st.markdown("<h1 style='font-size: 30px;'>模板选择</h1>", unsafe_allow_html=True)
         template_option = st.selectbox("请选择模板类型", ["内网模板", "外网模板"])
+        link_type = st.selectbox("请选择分享链接类型",["国外域名","国内ip+端口"])
         if template_option == "外网模板":
+            # 显示图片上传控件
+            uploaded_file = st.file_uploader("请上传一张图片", type=["jpg", "jpeg", "png"])
+
+             # 检查用户是否上传了文件
+            if uploaded_file is not None:
+                # 读取并展示图片
+                image = Image.open(uploaded_file)
+                st.image(image, caption='上传的图片', use_container_width =True)
+
             # 显示外网模板相关的按钮
-            if st.button("外网模板生成"):
+            if st.button("确定提交"):
+                # 将图片保存到后台，或进行其他处理
+                image_bytes = io.BytesIO()
+                image.save(image_bytes, format='PNG')
+                image_bytes.seek(0)  # 重置字节流的位置
+                # 查询+生成
                 have_select_data = [list(i)[0] for i in st.session_state.right_data]
                 have_select_id = [i["id"] for i in have_select_data]
                 select_data = get_data_from_db(have_select_id)
                 st.cache_data.clear()  # 自动清除缓存
-                bt_data, file_name = outter_upload(select_data)
+                bt_data, file_name = outter_upload(select_data, image_bytes, link_type)
                 st.success("处理完成!")
 
                 # 创建下载按钮

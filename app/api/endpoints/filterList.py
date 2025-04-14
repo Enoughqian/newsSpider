@@ -147,13 +147,13 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         # refreshstartdate refreshenddate
         if refreshstartdate and refreshenddate:
             t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
-            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date()
+            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date() + timedelta(days=1)
         elif refreshstartdate and not refreshenddate:
             t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
             t_end_date = t_mid_date + timedelta(days=1)
         elif not refreshstartdate and refreshenddate:
-            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date()
-            t_start_date = t_end_date - timedelta(days=1)
+            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date() + timedelta(days=1)
+            t_start_date = t_end_date - timedelta(days=2)
         else:
             t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
             t_start_date = t_mid_date - timedelta(days=1)

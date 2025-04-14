@@ -78,7 +78,14 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 return return_format_json
         elif wordtype == "outter":
             try:
-                bt_data, file_name = outter_upload(select_data)
+                image_bytes = requests.get(piclink).content
+                upload_pic_content = io.BytesIO(image_bytes)  # 这是一个 BytesIO 对象
+            except Exception as e:
+                return_format_json["err_code"] = 2
+                return_format_json["msg"] = "图片下载失败!"+str(e)
+                return return_format_json
+            try:
+                bt_data, file_name = outter_upload(select_data, upload_pic_content)
                 url = upload_to_cos(bt_data, file_name)
                 if url:
                     return_format_json["link"] = url

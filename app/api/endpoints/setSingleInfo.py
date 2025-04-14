@@ -43,6 +43,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
         # 包含两种: 编辑和推送
         data = rs.get("data",{})
+        print(data)
+        print(ctype)
     except:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = "输入格式错误"
@@ -111,6 +113,9 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         # mode包含push和edit, push必须包含四者全部,且不为空; edit是单条即可
         try:
             state = 1
+            if "pic_set" in data.keys():
+                if data["pic_set"] == "":
+                    data["pic_set"] = "xx"
             for temp_key in data.keys():
                 temp_content = str(data[temp_key]).strip()
                 if not len(temp_content):
@@ -118,10 +123,12 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             if state == 0 or len(data) == 0:
                 return_format_json["err_code"] = 2
                 return_format_json["msg"] = "输入内容存在空"
+                print(return_format_json)
                 return return_format_json
         except:
             return_format_json["err_code"] = 3
             return_format_json["msg"] = "解析异常"
+            print(return_format_json)
             return return_format_json
 
         try:
@@ -132,6 +139,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 NewsDetail.unique_id == unique_id
             )
             temp_data = db.exec(smt).one_or_none()
+
             if len(data) == 1:
                 # 获取处理项目
                 target_key = list(data.keys())[0]
@@ -157,7 +165,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                     if target_key == "main_classify":
                         temp_data.main_classify = target_content
                         temp_data.edit_state = 1
-                    if target_key == "pic_set ":
+                    if target_key == "pic_set":
                         target_content = target_content if "http" in target_content else ""
                         temp_data.pic_set = target_content 
                     temp_data.update_time = datetime.now()

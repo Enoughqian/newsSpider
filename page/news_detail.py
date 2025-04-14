@@ -78,7 +78,16 @@ else:
                 st.image(pic_set,caption="新闻图片")
             except:
                 pass
-        
+
+            if st.button("清空图片"):
+                pic_set = ""
+                data = {"pic_set": pic_set}
+                fetch_save(unique_id, data)
+                st.success("保存成功")
+                time.sleep(5)
+                st.rerun()
+      
+
         # 展示类别, 下拉框修改
         options = ["政治", "军事", "经济", "社会"]
         default_value = all_info.get("main_classify", "社会").split(";")[0]
