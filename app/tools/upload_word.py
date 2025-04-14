@@ -94,7 +94,7 @@ def split_data(data_list):
     
     if "经济" in result.keys():
         new_result["经济"] = result["经济"]
-    return result
+    return new_result
 
 def split_data_by_main(data_list):
     result = {}
