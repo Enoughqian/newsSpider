@@ -3,6 +3,7 @@ from streamlit_cookies_manager import EncryptedCookieManager
 from app.config.env_config import settings
 import requests
 import time
+import json
 
 # 创建一个加密的 Cookie Manager
 cookies = EncryptedCookieManager(
@@ -160,10 +161,13 @@ else:
                     }
                     response_text = fetch_save(unique_id, data)
                     if "处理成功" in response_text:
+                        link = json.loads(response_text)["share_link"]
+
+                        st.write(f"[点击这里访问分享链接]({link})")  # 显示链接
                         st.success("数据推送成功！")
                     else:
                         st.error("数据推送失败！")
-                    time.sleep(5)
-                    st.rerun()
+                    # time.sleep(5)
+                    # st.rerun()
     else:
         st.write("请提供项目 ID 以访问具体内容。")

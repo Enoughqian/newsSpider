@@ -119,9 +119,8 @@ def news_list():
     day_start = int(str(datetime.now() - timedelta(days=1)).split(" ")[0].split("-")[2])
     day_end = int(str(datetime.now()).split(" ")[0].split("-")[2])
 
-    refresh_start_date = ""
-    refresh_end_date = ""
-
+    refresh_start_date, refresh_end_date = "", ""
+    publish_start_date, publish_end_date = "", ""
 
     publish_date_range = st.date_input(
         "选择文章发布时间",
