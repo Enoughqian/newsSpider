@@ -60,7 +60,11 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     
     # 取数据
     topic = rs.get("topic", None)
-    refreshdate = rs.get("refreshdate", None)
+    # 更新起始时间
+    refreshstartdate = rs.get("refreshstartdate", None)
+    # 更新结束时间
+    refreshenddate = rs.get("refreshenddate", None)
+
     chinakeyword = rs.get("chinakeyword",None)
     keyword = rs.get("keyword",None)
     state = rs.get("state", None)
@@ -86,12 +90,25 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             filters.append(or_(*[ListTask.main_classify.like(f"%{temp_topic}%") for temp_topic in topic]))
         
         # 更新时间
-        if refreshdate is not None:
-            start_date = datetime.strptime(refreshdate, "%Y-%m-%d").date()
-            end_date = start_date + timedelta(days=1)
-            filters.append(ListTask.create_time >= start_date)
-            filters.append(ListTask.create_time < end_date)
+        # refreshstartdate refreshenddate
+        if refreshstartdate and refreshenddate:
+            t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
+            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date() + timedelta(days=1)
+        elif refreshstartdate and not refreshenddate:
+            t_start_date = datetime.strptime(refreshstartdate, "%Y-%m-%d").date()
+            t_end_date = t_start_date + timedelta(days=1)
+        elif not refreshstartdate and refreshenddate:
+            t_end_date = datetime.strptime(refreshenddate, "%Y-%m-%d").date() + timedelta(days=1)
+            t_start_date = t_end_date - timedelta(days=2)
+        else:
+            t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
+            t_start_date = t_mid_date - timedelta(days=1)
+            t_end_date = t_mid_date + timedelta(days=1)
         
+        # 过滤条件
+        filters.append(ListTask.update_time >= t_start_date)
+        filters.append(ListTask.update_time <= t_end_date)
+
         # 中文关键词
         if chinakeyword is not None:
             filters.append(ListTask.title_translate.like(f"%{chinakeyword}%"))
