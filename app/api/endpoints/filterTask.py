@@ -67,7 +67,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
     chinakeyword = rs.get("chinakeyword",None)
     keyword = rs.get("keyword",None)
-    state = rs.get("state", None)
+    state = rs.get("state", "无效")
     offset = (page - 1) * num
 
     try:

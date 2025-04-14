@@ -119,20 +119,17 @@ def news_list():
     day_start = int(str(datetime.now() - timedelta(days=1)).split(" ")[0].split("-")[2])
     day_end = int(str(datetime.now()).split(" ")[0].split("-")[2])
 
-    publish_start_date = ""
-    publish_end_date = ""
     refresh_start_date = ""
     refresh_end_date = ""
 
 
     publish_date_range = st.date_input(
         "选择文章发布时间",
-        [date(years, months, day_start), date(years, months, day_end)],
+        value = [date(2024, 1, 1), date(2030, 12, 31)],
         min_value = date(2024, 1, 1),
         max_value = date(2030, 12, 31)
     )
     
-
     # 确保选择了两个日期
     if len(publish_date_range) == 2:
         publish_start_date, publish_end_date = publish_date_range

@@ -103,7 +103,7 @@ def main():
         login()
     else:
         st.sidebar.title("导航")
-        options = st.sidebar.radio("选择功能", ("统计信息", "标题识别", "新闻列表", "上传生成页"))
+        options = st.sidebar.radio("选择功能", ("统计信息", "标题识别", "新闻列表", "上传生成"))
 
         show_floating_window()
         if options == "统计信息":
@@ -115,7 +115,7 @@ def main():
         elif options == "新闻列表":
             st.title("新闻列表页")
             news_list()
-        elif options == "上传生成页":
+        elif options == "上传生成":
             st.title("上传页")
             upload_page()
         # 退出登录按钮

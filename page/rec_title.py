@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta, date
 import requests
 from app.config.env_config import settings
 
@@ -32,7 +32,7 @@ def fetch_news(params):
 def recall_edit(params):
     recall_data = []
     for i in params:
-        if i.get("tag","") in ["有效",'无效']:
+        if i.get("tag","") in ["无效",'有效']:
             if i["tag"] == "无效":
                 i["tag"] = 0
                 del i["classify"]
@@ -160,18 +160,38 @@ def rec_title():
     # 状态筛选
     state_filter = st.selectbox(
         "选择状态 (可选)",
-        options=["有效", "无效", "待定"]
+        options=["无效", "有效", "待定"]
     )
     
     # 主题筛选
     topic_filter = st.multiselect(
         "选择主题 (多选)",
-        ["", "社会", "军事", "政治", "经济"]
+        ["社会", "军事", "政治", "经济"]
     )
     
     # 更新时间筛选
-    refresh_date_filter = st.date_input("选择更新时间(可选)", value=None)
+    # 提示用户选择开始日期和结束日期
+    years = int(str(datetime.now()).split(" ")[0].split("-")[0])
+    months = int(str(datetime.now()).split("-")[1])
+    day_start = int(str(datetime.now() - timedelta(days=1)).split(" ")[0].split("-")[2])
+    day_end = int(str(datetime.now()).split(" ")[0].split("-")[2])
+    
+    refresh_start_date = ""
+    refresh_end_date = ""
 
+    refresh_date_range = st.date_input(
+        "选择最后更新时间",
+        [date(years, months, day_start), date(years, months, day_end)],
+        min_value = date(2024, 1, 1),
+        max_value = date(2030, 12, 31)
+    )
+
+    # 确保选择了两个日期
+    if len(refresh_date_range) == 2:
+        refresh_start_date, refresh_end_date = refresh_date_range
+        refresh_start_date = str(refresh_start_date)
+        refresh_end_date = str(refresh_end_date)
+    
     # 英文标题关键词
     keyword_filter = st.text_input("原文标题包含", value=None)
 
@@ -183,7 +203,8 @@ def rec_title():
         params = {
             "state": state_filter if state_filter in ["有效","无效","待定"] else None,
             "topic": [i for i in topic_filter if i in ["","军事","社会","政治","经济"]],
-            "refreshdate": refresh_date_filter.strftime("%Y-%m-%d") if refresh_date_filter else None,
+            "refreshstartdate": refresh_start_date,
+            "refreshenddate": refresh_end_date,
             "chinakeyword": china_keyword_filter if china_keyword_filter else None,
             "keyword": keyword_filter if keyword_filter else None,
             "page": 1,
