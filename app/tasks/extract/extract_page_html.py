@@ -57,8 +57,8 @@ def extract(data):
             page_html = etree.HTML(page_content)
 
             result = [page_html.xpath(xpath) for key, xpath in html_params.items()]
-            content = "\n".join([mm.strip() for mm in result[0] if mm.strip() != ""])
-
+            content = "\n".join([mm.strip().replace("\n", " ") for mm in result[0] if mm.strip() != ""])
+            content = content.replace("  "," ")
             # 处理图片信息
             pic_set = ""
             try:
