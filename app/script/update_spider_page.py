@@ -54,8 +54,9 @@ def get_task_from_db(max_num=40):
             smt_info = select(SpiderPageConfig).where(SpiderPageConfig.domain == temp_domain)
             exist_one = db.exec(smt_info).one_or_none()
             if not exist_one:
-                print({"info": "缺失配置"})
+                logger.info("id: {}, 页面: {}, 缺失配置".format(temp_id, temp_link))
             else:
+                logger.info("id: {}, 页面: {}, 开始抓取".format(temp_id, temp_link))
                 temp_params = {
                     "link": temp_link,
                     "id": temp_id,
@@ -64,11 +65,11 @@ def get_task_from_db(max_num=40):
                     "title": temp_title,
                     "spider_page_func": exist_one.spider_page_func,
                     "extract_page_func": exist_one.extract_page_func,
+                    "other_ruler": exist_one.other_ruler,
                     "date_type": exist_one.date_type,
                     "extract_page_params": json.loads(exist_one.extract_page_params),
                     "country": temp_country
                 }
-                # print(temp_params)
                 all_params.append(temp_params)
                 index += 1
                 if index == max_num:
@@ -76,8 +77,6 @@ def get_task_from_db(max_num=40):
 
     tasks = []
     for param in all_params:
-        print(param)
-        print("================")
         taskA = spider_page.s(param)
         taskB = extract_page.s()
         tasks.append(chain(taskA, taskB))

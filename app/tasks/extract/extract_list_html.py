@@ -12,6 +12,7 @@ from app.io.session import engine
 from sqlmodel import Session, select, update, func, or_
 from datetime import datetime
 from app.tools.tools import exchange_date
+from loguru import logger
 
 def extract(data):
     html_params = data.get("extract_list_params")
@@ -68,7 +69,7 @@ def extract(data):
                         exist_data.cost = 0
 
                     insert_list.append(exist_data)
-                print(len(insert_list))
+                logger.info("网站: {}, 数量: {}, 链接: {}".format(domain, len(insert_list), temp_link))
                 # 全部提交
                 db.add_all(insert_list)
                 db.commit()

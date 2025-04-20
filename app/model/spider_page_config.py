@@ -11,3 +11,4 @@ class SpiderPageConfig(SQLModel, table=True):
     spider_page_func: str 
     extract_page_func: str
     extract_page_params: str
+    other_ruler: str

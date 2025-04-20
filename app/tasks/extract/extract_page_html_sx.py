@@ -75,7 +75,7 @@ def extract(data):
             else:    
                 content = "\n".join([mm.strip().replace("\n", " ") for mm in result[0] if mm.strip() != ""])
                 content = content.replace("  "," ")
-
+            content = str(content).split("***")[0]
             # 处理图片信息
             pic_set = ""
             try:

@@ -22,6 +22,7 @@ import os
 import pandas as pd
 import re
 import numpy as np
+from copy import deepcopy
 
 router = APIRouter(prefix="/setSingleInfo")
 
@@ -87,6 +88,9 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
             if not temp_data:
                 temp_data = FormalNews()
+            else:
+                # 存在的话，用编辑后的值
+                temp_result = deepcopy(temp_data)
 
             temp_data.id = unique_id
             temp_data.platform_id = temp_platform_id
