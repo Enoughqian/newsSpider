@@ -56,7 +56,7 @@ def extract(data):
                 db.commit()
             
             # 文章解析数据处理
-            for i in ["<em>","</em>","<strong>","</strong>","<br>"]:
+            for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
                 page_content = page_content.replace(i, "")
 
             # 原始先全部都解析一遍

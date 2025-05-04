@@ -24,6 +24,17 @@ def remove_incomplete_tags(html):
 
     return str(soup)
 
+def remove_figure_tags(content):
+    # 解析 HTML 内容
+    html_content = html.fromstring(content)
+    
+    # 查找并移除所有 figure 标签及其内容
+    for figure in html_content.xpath("//figure"):
+        figure.getparent().remove(figure)
+    
+    # 返回修改后的 HTML 内容
+    return etree.tostring(html_content, encoding='unicode', method='html')
+
 def p_filter_a1(content, xpath):
     # filter标签
     new_xpath = xpath.replace("p/text()","")
@@ -59,6 +70,113 @@ def p_filter_a1(content, xpath):
     content = etree.HTML(html_string).xpath("//p/text()")
     return content
 
+def p_filter_a2(content, xpath):
+    content = remove_figure_tags(content)
+    
+    # filter标签
+    new_xpath = xpath.replace("p/text()","")
+    for i in range(-2,0,1):
+        if new_xpath[i] == "/":
+            new_xpath = new_xpath[:-1]
+    
+    # 获得p标签上一级内容
+    html_content = etree.HTML(content)
+    div_element = html_content.xpath(new_xpath)[0]
+    html_string = html.tostring(div_element, encoding='unicode')
+    
+    # 检查a标签
+    tag_pattern = r'<a\s+href=[\'"]?(.*?)?[\'"]?\s*>(.*?)<\/a>'
+    
+    # 替换
+    matches = re.findall(tag_pattern, html_string, re.DOTALL)
+    all_match = [[f'{text}', f'<a href="{href}">{text}'] for href, text in matches]
+    
+    # 检验第一个p标签的位置
+    judge_index = html_string.index("<p")
+    
+    # 检验匹配出来的tag的位置
+    for temp in all_match:
+        temp_origin = temp[0]
+        temp_replace = temp[1].split(">")[0] + ">"
+        
+        temp_index = html_string.index(temp_origin)
+        if temp_index > judge_index:
+            html_string = html_string.replace(temp_replace, "")
+    html_string = remove_incomplete_tags(html_string)
+    
+    content = etree.HTML(html_string).xpath("//p/text()")
+    return content
+
+def p_filter_a3(content, xpath):
+    # filter标签
+    new_xpath = xpath.replace("p/text()","")
+    content = content.replace('class="topiclink always-topic" ', "")
+    for i in range(-2,0,1):
+        if new_xpath[i] == "/":
+            new_xpath = new_xpath[:-1]
+    
+    # 获得p标签上一级内容
+    html_content = etree.HTML(content)
+    div_element = html_content.xpath(new_xpath)[0]
+    html_string = html.tostring(div_element, encoding='unicode')
+    
+    # 检查a标签
+    tag_pattern = r'<a\s+href=[\'"]?(.*?)?[\'"]?>(.*?)<\/a>'
+    
+    # 替换
+    matches = re.findall(tag_pattern, html_string)
+    all_match = [[f'{text}', f'<a href="{href}">{text}'] for href, text in matches]
+    
+    # 检验第一个p标签的位置
+    judge_index = html_string.index("<p")
+    
+    # 检验匹配出来的tag的位置
+    for temp in all_match:
+        temp_origin = temp[0]
+        temp_replace = temp[1].split(">")[0] + ">"
+        
+        temp_index = html_string.index(temp_origin)
+        if temp_index > judge_index:
+            html_string = html_string.replace(temp_replace, "")
+    html_string = remove_incomplete_tags(html_string)
+    
+    content = etree.HTML(html_string).xpath("//p/text()")
+    return content
+
+def tag_p_filter_a1(content, xpath):
+    # filter标签
+    new_xpath = xpath.replace("p[@class='story-body-text']/text()","")
+    for i in range(-2,0,1):
+        if new_xpath[i] == "/":
+            new_xpath = new_xpath[:-1]
+    
+    # 获得p标签上一级内容
+    html_content = etree.HTML(content)
+    div_element = html_content.xpath(new_xpath)[0]
+    html_string = html.tostring(div_element, encoding='unicode')
+    
+    # 检查a标签
+    tag_pattern = r'<a\s+href=[\'"]?(.*?)?[\'"]?>(.*?)<\/a>'
+    
+    # 替换
+    matches = re.findall(tag_pattern, html_string)
+    all_match = [[f'{text}', f'<a href="{href}">{text}'] for href, text in matches]
+    
+    # 检验第一个p标签的位置
+    judge_index = html_string.index("<p")
+    
+    # 检验匹配出来的tag的位置
+    for temp in all_match:
+        temp_origin = temp[0]
+        temp_replace = temp[1].split(">")[0] + ">"
+        
+        temp_index = html_string.index(temp_origin)
+        if temp_index > judge_index:
+            html_string = html_string.replace(temp_replace, "")
+    html_string = remove_incomplete_tags(html_string)
+    
+    content = etree.HTML(html_string).xpath("//p[@class='story-body-text']/text()")
+    return content
 
 if __name__ == "__main__":
     url = "https://www.aljazeera.com/news/2025/4/14/algeria-orders-exit-of-french-officials-amid-rocky-relations"

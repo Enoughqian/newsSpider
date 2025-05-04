@@ -56,7 +56,7 @@ def extract(data):
                 db.commit()
             
             # 文章解析数据处理
-            for i in ["<em>","</em>","<strong>","</strong>","<br>"]:
+            for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
                 page_content = page_content.replace(i, "")
 
             # 原始先全部都解析一遍
@@ -72,7 +72,7 @@ def extract(data):
                 temp_content_xpath = html_params["content"]
                 content = extract_page_func(temp_content, temp_content_xpath)
                 content = "\n".join([mm.strip().replace("\n", " ") for mm in content if mm.strip() != ""])
-            else:    
+            else:
                 content = "\n".join([mm.strip().replace("\n", " ") for mm in result[0] if mm.strip() != ""])
                 content = content.replace("  "," ")
 
