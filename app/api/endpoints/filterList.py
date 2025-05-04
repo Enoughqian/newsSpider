@@ -140,7 +140,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             date_state = 1
         else:
             mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
-            end_date = mid_date - timedelta(days=1)
+            start_date = mid_date - timedelta(days=1)
             end_date = mid_date + timedelta(days=1)
 
         # 更新时间
@@ -159,12 +159,10 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             t_start_date = t_mid_date - timedelta(days=1)
             t_end_date = t_mid_date + timedelta(days=1)
 
-        if date_state == 1:
-            filters.append(NewsDetail.publish_date >= start_date)
-            filters.append(NewsDetail.publish_date <= end_date)
-        if date_state == 0:
-            filters.append(NewsDetail.update_time >= t_start_date)
-            filters.append(NewsDetail.update_time <= t_end_date)
+        filters.append(NewsDetail.publish_date >= start_date)
+        filters.append(NewsDetail.publish_date <= end_date)
+        filters.append(NewsDetail.update_time >= t_start_date)
+        filters.append(NewsDetail.update_time <= t_end_date)
         
         # 标题原文关键词
         if title_keyword:
@@ -196,6 +194,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)
+        print("==========")
+        print(return_format_json)
         return return_format_json
     
     try:
@@ -232,7 +232,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
-    
+    print("==========")
+    print(return_format_json)
     return return_format_json
 
 
