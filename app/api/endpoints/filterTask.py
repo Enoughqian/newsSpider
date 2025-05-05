@@ -51,7 +51,9 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
 
     # 主题在回调后田间到列表库中添加后面加
     try:
-        page = rs.get("page",1)
+        page = rs.get("page", 1)
+        if page == 0:
+            page = 1
         num = rs.get("num")
     except:
         return_format_json["err_code"] = 3
