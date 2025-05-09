@@ -282,7 +282,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 db.add(temp_data)
                 db.commit()
 
-                return_format_json["share_link"] = "http://news.ideachorus.com/index.html?id=" + str(temp_id)
+                return_format_json["share_link"] = "http://news.deftrack.com/index.html?id=" + str(temp_id)
 
         except Exception as e:
             return_format_json["msg"] = "处理失败!"
