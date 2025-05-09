@@ -110,8 +110,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             abstract_state = 1
             edit_state = 0
         
-        print("===========")
-        print(edit_state)
         # 过滤
         filters = []
 
@@ -230,6 +228,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
     
+    logger.info(json.dumps(return_format_json, ensure_ascii=False))
     return return_format_json
 
 
