@@ -33,6 +33,7 @@ def extract(data):
     other_ruler = data.get("other_ruler")
 
     date_type = int(data.get("date_type"))
+    content = ""
 
     # 根据配置解析
     # 2是未处理,1是处理完,0是处理失败
@@ -94,7 +95,7 @@ def extract(data):
                 publish_date = datetime.now()
             
             # 按照长度处理
-            if len(content.strip()) == 0:
+            if len(content.strip()) <10:
                 final_status = 0
             else:
                 # 数据入库
