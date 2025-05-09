@@ -84,7 +84,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     content_translate_keyword = rs.get("content_translate_keyword", None)
     contain_keyword = rs.get("contain_keyword", None)
     offset = (page - 1) * num
-
+    
     '''
         状态: state
             已抓取未生成: 
@@ -109,7 +109,9 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             # 默认值是已生成未处理
             abstract_state = 1
             edit_state = 0
-
+        
+        print("===========")
+        print(edit_state)
         # 过滤
         filters = []
 
@@ -125,24 +127,19 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             filters.append(or_(*[NewsDetail.main_classify.like(f"%{temp_topic}%") for temp_topic in topic]))
         
         # 发布时间
-        date_state = 0
-
         # publishstartdate publishenddate
         if publishstartdate and publishenddate:
             start_date = datetime.strptime(publishstartdate, "%Y-%m-%d").date()
             end_date = datetime.strptime(publishenddate, "%Y-%m-%d").date()
-            date_state = 1
         elif publishstartdate and not publishenddate:
             start_date = datetime.strptime(publishstartdate, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=1)
-            date_state = 1
         elif not publishstartdate and publishenddate:
             end_date = datetime.strptime(publishenddate, "%Y-%m-%d").date()
             start_date = end_date - timedelta(days=1)
-            date_state = 1
         else:
             mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
-            start_date = mid_date - timedelta(days=1)
+            start_date = mid_date - timedelta(days=90)
             end_date = mid_date + timedelta(days=1)
 
         # 更新时间
@@ -158,7 +155,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             t_start_date = t_end_date - timedelta(days=2)
         else:
             t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
-            t_start_date = t_mid_date - timedelta(days=1)
+            t_start_date = t_mid_date - timedelta(days=90)
             t_end_date = t_mid_date + timedelta(days=1)
 
         filters.append(NewsDetail.publish_date >= start_date)
@@ -196,8 +193,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 1
         return_format_json["msg"] = str(e)
-        print("==========")
-        print(return_format_json)
         return return_format_json
     
     try:
@@ -234,8 +229,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
-    print("==========")
-    print(return_format_json)
+    
     return return_format_json
 
 
