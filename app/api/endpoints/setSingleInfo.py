@@ -64,6 +64,12 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             return_format_json["msg"] = "数据没找到!"
             return_format_json["err_code"] = 4
         else:
+            # 修改基础状态
+            temp_result.edit_state = 2
+            temp_result.update_time = datetime.now()
+            db.add(temp_result)
+            db.commit()
+
             # 获取基础信息
             smt = select(
                 PlatformInfo.domain,
