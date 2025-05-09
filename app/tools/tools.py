@@ -135,7 +135,7 @@ def upload_to_cos(rb_content, path):
         )
         state = response.get("ETag",None)
         if state:
-            return urljoin("https://download-word-1258484232.cos.ap-beijing.myqcloud.com/", path)
+            return urljoin("https://download-word-1352587903.cos.ap-beijing.myqcloud.com/", path)
         else:
             return None
     except Exception as e:

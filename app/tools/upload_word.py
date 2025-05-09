@@ -108,9 +108,15 @@ def split_data_by_main(data_list):
             result[k.main_classify] = [k]
     
     # 遍历
-    for k in ["政治","社会","军事"]:
-        temp_data = result.get(k,[])
-        final_result["国际要闻"].extend(temp_data)
+    data_c_1 = result.get("政治",[])
+    final_result["国际要闻"].extend(temp_data)
+
+    data_c_2 = result.get("军事",[])
+    final_result["国际要闻"].extend(temp_data)
+
+    data_c_3 = result.get("社会",[])
+    final_result["国际要闻"].extend(temp_data)
+
     for k in ["经济"]:
         temp_data = result.get(k,[])
         final_result["经济动态"].extend(temp_data)
@@ -298,10 +304,7 @@ def inner_upload(origin_data, upload_pic_content):
     外网: 标题和链接 20条左右 政治要闻、军事要闻
 '''
 def outter_upload(origin_data, upload_pic_content, ctype="国外域名"):
-    if str(ctype) == "国外域名":
-        link_base = "http://news.ideachorus.com/index.html?id={}"
-    else:
-        link_base = "http://news.deftrack.com/index.html?id={}"
+    link_base = "http://news.deftrack.com/index.html?id={}"
     # 信息分类
     new_filter_data = split_data(origin_data)
 

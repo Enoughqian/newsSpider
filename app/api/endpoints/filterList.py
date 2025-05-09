@@ -230,7 +230,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             return_format_json["num"] += 1
         return_format_json["msg"] = "成功!"
         return_format_json["total_num"] = total_count
-        return_format_json["total_page"] = int(total_count/20) + 1
+        return_format_json["total_page"] = int(total_count/num) + 1
     except Exception as e:
         return_format_json["err_code"] = 2
         return_format_json["msg"] = str(e)
