@@ -109,17 +109,17 @@ def split_data_by_main(data_list):
     
     # 遍历
     data_c_1 = result.get("政治",[])
-    final_result["国际要闻"].extend(temp_data)
+    final_result["国际要闻"].extend(data_c_1)
 
     data_c_2 = result.get("军事",[])
-    final_result["国际要闻"].extend(temp_data)
+    final_result["国际要闻"].extend(data_c_2)
 
     data_c_3 = result.get("社会",[])
-    final_result["国际要闻"].extend(temp_data)
+    final_result["国际要闻"].extend(data_c_3)
 
-    for k in ["经济"]:
-        temp_data = result.get(k,[])
-        final_result["经济动态"].extend(temp_data)
+    data_c_4 = result.get("经济",[])
+    final_result["经济动态"].extend(data_c_4)
+
     # 去除空的
     final_result = {k:v for k,v in final_result.items() if len(v) > 0}
     return final_result
