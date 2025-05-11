@@ -4,6 +4,50 @@ from lxml import etree, html
 from bs4 import BeautifulSoup
 import requests
 
+# 去除标签属性
+def remove_specified_tags_attributes(html_content):
+    tags_to_remove = ["<em>", "</em>", "<strong>", "</strong>", "<br>", "<b>", "</b>"]
+    # 解析HTML内容
+    document = html.fromstring(html_content)
+
+    # 遍历指定的标签并去除属性
+    for tag in tags_to_remove:
+        # 查找所有指定的标签
+        elements = document.xpath(f'//{tag.strip("<>")}')
+        
+        for element in elements:
+            # 清空所有属性
+            for attr in list(element.attrib.keys()):  # 使用list()以避免修改字典时出现的问题
+                del element.attrib[attr]
+
+    # 返回处理后的HTML
+    return etree.tostring(document, pretty_print=True, encoding='unicode')
+
+# 处理a标签中的href
+def process_a_tags(html_content):
+    # 解析HTML内容
+    document = html.fromstring(html_content)
+    # 查找所有的<a>标签
+    a_tags = document.xpath('//a')
+
+    for a in a_tags:
+        # 获取当前<a>标签的href属性
+        href = a.get('href')
+
+        # 清空所有属性
+        for attr in a.attrib.keys():
+            del a.attrib[attr]
+
+        # 如果没有href属性，则增加一个空的href属性
+        if href is None:
+            a.set('href', '')
+        else:
+            # 保留原有的href属性
+            a.set('href', href)
+    # 返回处理后的HTML
+    return etree.tostring(document, pretty_print=True, encoding='unicode')
+
+# 处理标签闭合问题
 def remove_incomplete_tags(html):
     # 解析 HTML 内容
     soup = BeautifulSoup(html, 'html.parser')
@@ -36,6 +80,14 @@ def remove_figure_tags(content):
     return etree.tostring(html_content, encoding='unicode', method='html')
 
 def p_filter_a1(content, xpath):
+    # 处理标签属性
+    content = remove_specified_tags_attributes(content)
+    
+    # 文章解析数据处理
+    for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
+        content = content.replace(i, "")
+                
+    content = process_a_tags(content)
     # filter标签
     new_xpath = xpath.replace("p/text()","")
     for i in range(-2,0,1):
@@ -68,9 +120,17 @@ def p_filter_a1(content, xpath):
     html_string = remove_incomplete_tags(html_string)
     
     content = etree.HTML(html_string).xpath("//p/text()")
+    content = [i for i in content if i.strip() != ""]
     return content
 
 def p_filter_a2(content, xpath):
+    # 处理标签属性
+    content = remove_specified_tags_attributes(content)
+
+    for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
+        content = content.replace(i, "")
+    
+    content = process_a_tags(content)
     content = remove_figure_tags(content)
     
     # filter标签
@@ -105,9 +165,16 @@ def p_filter_a2(content, xpath):
     html_string = remove_incomplete_tags(html_string)
     
     content = etree.HTML(html_string).xpath("//p/text()")
+    content = [i for i in content if i.strip() != ""]
     return content
 
 def p_filter_a3(content, xpath):
+    # 处理标签属性
+    content = remove_specified_tags_attributes(content)
+    
+    for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
+        content = content.replace(i, "")
+    content = process_a_tags(content)
     # filter标签
     new_xpath = xpath.replace("p/text()","")
     content = content.replace('class="topiclink always-topic" ', "")
@@ -141,9 +208,13 @@ def p_filter_a3(content, xpath):
     html_string = remove_incomplete_tags(html_string)
     
     content = etree.HTML(html_string).xpath("//p/text()")
+    content = [i for i in content if i.strip() != ""]
     return content
 
 def tag_p_filter_a1(content, xpath):
+    for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
+        content = content.replace(i, "")
+    content = process_a_tags(content)
     # filter标签
     new_xpath = xpath.replace("p[@class='story-body-text']/text()","")
     for i in range(-2,0,1):
@@ -176,17 +247,26 @@ def tag_p_filter_a1(content, xpath):
     html_string = remove_incomplete_tags(html_string)
     
     content = etree.HTML(html_string).xpath("//p[@class='story-body-text']/text()")
+    content = [i for i in content if i.strip() != ""]
     return content
 
 if __name__ == "__main__":
     url = "https://www.aljazeera.com/news/2025/4/14/algeria-orders-exit-of-french-officials-amid-rocky-relations"
+    url = "https://www.dawn.com/news/1910183/leadership-responds-with-one-voice-to-indian-attacks"
+    url = "https://thedefensepost.com/2025/05/02/collaborative-combat-aircraft-drones-tests/"
+    url = "https://www.mining.com/saudi-arabia-and-us-to-sign-mining-deal/"
+    url = "https://thedefensepost.com/2025/05/06/us-microwave-weapons-philippines/"
+    url = "https://thedefensepost.com/2025/05/09/india-repulsed-pakistan-attacks/"
+    url = "https://www.shafaq.com/en/Economy/Kirkuk-s-oil-boom-Iraqi-PM-to-launch-massive-refinery-project"
+    # url = "https://www.shafaq.com/en/Security/Arab-League-summit-security-first-Iraq-bans-protests-for-ten-days"
 
     all_xpath = {"content":" //main[@id='main-content-area']//p/text()","pic_set":"//figure[@class='article-featured-image']/div[@class='responsive-image']/img/@src","publish_date":"//div[@class='article-dates']/div/span[2]/text()"}
-
+    all_xpath = {"content":"//div[contains(@class, 'template__main')]/div[@dir='auto']//p/text()","pic_set":"//div[@class='media__item              ']/picture/img/@src","publish_date":"//span[@class='timestamp--published']/span[@class='timestamp--date']/text()"}
+    all_xpath = {"content":"//div[@class='entry-content entry clearfix']/p/span/text() | //div[@class='entry-content entry clearfix']/p/a/span/text() | //div[@class='entry-content entry clearfix']/p/text()","pic_set":"//div[@class='entry-content entry clearfix']/div/a/img/@src","publish_date":"//*[@id='the-post']/header/div/div/span[2]/text()"}
+    all_xpath = {"content":"//div[@class='post-inner-content']/div[@class='content']/p/text()","pic_set":"//div[@class='img-content']/img/@src","publish_date":"//div[@class='post-meta mb-4']/text()"}
+    all_xpath = {"content":"//div[@class='entry-content entry clearfix']/p/span/text() | //div[@class='entry-content entry clearfix']/p/a/span/text() | //div[@class='entry-content entry clearfix']/p/text()","pic_set":"//div[@class='entry-content entry clearfix']/div/a/img/@src","publish_date":"//*[@id='the-post']/header/div/div/span[2]/text()"}
+    all_xpath = {"content":"//article[@id='article']/div/div[@id='newsDetails']//p/text()","pic_set":"//div[@id='articleImg']/img/@src","publish_date":"//span[@id='postDate']/text()"}
+    
     text = requests.get(url).text
-
     b = p_filter_a1(text, all_xpath["content"])
     print(b)
-
-    a = '''Sitting centre-right President Daniel Noboa has won the run-off round of Ecuador\'s presidential election, meaning he will now serve a full four-year term.\nNoboa, who described his victory as "historic", has only been in power since November 2023 after winning a snap election.\nHe has defined his presidency, so far, through a tough military crackdown on violent criminal gangs in the country, which has become the most violent in the region.\nHis left-wing challenger, Luisa González, said she did not accept the result and claimed fraud, without providing evidence.'''
-    print(a)
