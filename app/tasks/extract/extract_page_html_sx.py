@@ -94,7 +94,7 @@ def extract(data):
                 publish_date = datetime.now()
             
             # 按照长度处理
-            if len(content.strip()) == 0:
+            if len(content.strip()) < 100:
                 final_status = 0
             else:
                 # 数据入库
