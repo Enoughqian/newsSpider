@@ -68,6 +68,10 @@ def remove_incomplete_tags(html):
 
     return str(soup)
 
+# 处理p标签下的span
+def process_p_drop_span(html_content):
+    return html_content.replace("<span>","").replace("</span>","")
+
 def remove_figure_tags(content):
     # 解析 HTML 内容
     html_content = html.fromstring(content)
@@ -211,6 +215,52 @@ def p_filter_a3(content, xpath):
     content = [i for i in content if i.strip() != ""]
     return content
 
+def p_filter_a_and_span(content, xpath):
+    # 处理标签属性
+    content = remove_specified_tags_attributes(content)
+    
+    # 文章解析数据处理
+    for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
+        content = content.replace(i, "")
+                
+    content = process_a_tags(content)
+    content = process_p_drop_span(content)
+    
+    # filter标签
+    new_xpath = xpath.replace("p/text()","")
+    for i in range(-2,0,1):
+        if new_xpath[i] == "/":
+            new_xpath = new_xpath[:-1]
+    
+    # 获得p标签上一级内容
+    html_content = etree.HTML(content)
+    div_element = html_content.xpath(new_xpath)[0]
+    html_string = html.tostring(div_element, encoding='unicode')
+    
+    # 检查a标签
+    tag_pattern = r'<a\s+href=[\'"]?(.*?)?[\'"]?>(.*?)<\/a>'
+    
+    # 替换
+    matches = re.findall(tag_pattern, html_string)
+    all_match = [[f'{text}', f'<a href="{href}">{text}'] for href, text in matches]
+    
+    # 检验第一个p标签的位置
+    judge_index = html_string.index("<p")
+    
+    # 检验匹配出来的tag的位置
+    for temp in all_match:
+        temp_origin = temp[0]
+        temp_replace = temp[1].split(">")[0] + ">"
+        
+        temp_index = html_string.index(temp_origin)
+        if temp_index > judge_index:
+            html_string = html_string.replace(temp_replace, "")
+    html_string = remove_incomplete_tags(html_string)
+    
+    content = etree.HTML(html_string).xpath("//p/text()")
+    content = [i.replace("\n", " ").strip() for i in content if i.strip() != ""]
+    return content
+
 def tag_p_filter_a1(content, xpath):
     for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
         content = content.replace(i, "")
@@ -258,7 +308,8 @@ if __name__ == "__main__":
     url = "https://thedefensepost.com/2025/05/06/us-microwave-weapons-philippines/"
     url = "https://thedefensepost.com/2025/05/09/india-repulsed-pakistan-attacks/"
     url = "https://www.shafaq.com/en/Economy/Kirkuk-s-oil-boom-Iraqi-PM-to-launch-massive-refinery-project"
-    # url = "https://www.shafaq.com/en/Security/Arab-League-summit-security-first-Iraq-bans-protests-for-ten-days"
+    url = "https://www.shafaq.com/en/Security/Arab-League-summit-security-first-Iraq-bans-protests-for-ten-days"
+    # url = "https://www.shafaq.com/en/Economy/Kirkuk-s-oil-boom-Iraqi-PM-to-launch-massive-refinery-project"
 
     all_xpath = {"content":" //main[@id='main-content-area']//p/text()","pic_set":"//figure[@class='article-featured-image']/div[@class='responsive-image']/img/@src","publish_date":"//div[@class='article-dates']/div/span[2]/text()"}
     all_xpath = {"content":"//div[contains(@class, 'template__main')]/div[@dir='auto']//p/text()","pic_set":"//div[@class='media__item              ']/picture/img/@src","publish_date":"//span[@class='timestamp--published']/span[@class='timestamp--date']/text()"}
@@ -266,7 +317,8 @@ if __name__ == "__main__":
     all_xpath = {"content":"//div[@class='post-inner-content']/div[@class='content']/p/text()","pic_set":"//div[@class='img-content']/img/@src","publish_date":"//div[@class='post-meta mb-4']/text()"}
     all_xpath = {"content":"//div[@class='entry-content entry clearfix']/p/span/text() | //div[@class='entry-content entry clearfix']/p/a/span/text() | //div[@class='entry-content entry clearfix']/p/text()","pic_set":"//div[@class='entry-content entry clearfix']/div/a/img/@src","publish_date":"//*[@id='the-post']/header/div/div/span[2]/text()"}
     all_xpath = {"content":"//article[@id='article']/div/div[@id='newsDetails']//p/text()","pic_set":"//div[@id='articleImg']/img/@src","publish_date":"//span[@id='postDate']/text()"}
+    all_xpath = {"content":"//article[@id='article']/div/div[@id='newsDetails']//p/text()","pic_set":"//div[@id='articleImg']/img/@src","publish_date":"//span[@id='postDate']/text()"}
     
     text = requests.get(url).text
-    b = p_filter_a1(text, all_xpath["content"])
+    b = p_filter_a_and_span(text, all_xpath["content"])
     print(b)
