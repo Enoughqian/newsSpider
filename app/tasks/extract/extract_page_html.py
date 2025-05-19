@@ -37,6 +37,9 @@ def extract(data):
 
     # 根据配置解析
     # 2是未处理,1是处理完,0是处理失败
+    # 处理图片信息
+    pic_set = ""
+    publish_date = datetime.now()
     if not data["err_code"]:
         try:
             # 文章原始信息表入库
@@ -78,7 +81,6 @@ def extract(data):
                 content = content.replace("  "," ")
 
             # 处理图片信息
-            pic_set = ""
             try:
                 temp_url = result[1][0]
                 if "http" not in temp_url:
