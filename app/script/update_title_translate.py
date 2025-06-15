@@ -13,7 +13,10 @@ from loguru import logger
 from urllib.parse import urlparse
 import asyncio
 from playwright.async_api import async_playwright
+from app.script.get_fanyi import get_data_from_youdao
 from copy import deepcopy
+import requests
+import time
 
 # 百度翻译
 async def get_baidu_translate(playwright, params):
@@ -64,23 +67,44 @@ async def catch_data(params):
         result = await get_baidu_translate(playwright, params)
     return result
 
+def catch_youdao(params):
+    result = {}
+    for key, title in params.items():
+        try:
+            trans_result = get_data_from_youdao(title)
+            if trans_result:
+                result[key] = trans_result
+                time.sleep(2)
+        except:
+            continue
+
+    return result
+
 def get_task_from_db(max_num=10):
     with Session(engine, autoflush=False) as db:
         # 标题翻译
+        # 标题翻译长度小于4的记录
         smt = select(ListTask).where(
-            ListTask.title_translate == None
+            (func.length(ListTask.title_translate) < 4) | 
+            (ListTask.title_translate.is_(None))
         ).order_by(ListTask.update_time.desc()).limit(max_num)
         # 获取全部的
         exist_basic = db.exec(smt).all()
-        logger.info("数量: "+ str(len(exist_basic)))
+        logger.info("全部数量: "+ str(len(exist_basic)))
+        
         input_data = {}
+
         for temp_basic in exist_basic:
             temp_unique_id = temp_basic.id
             temp_title = temp_basic.title
             input_data[temp_unique_id] = temp_title
-        print(input_data)
-        # 请求
-        result = asyncio.run(catch_data(input_data))
+
+        methods = "baidu"
+        if methods == "baidu":
+            # 请求
+            result = asyncio.run(catch_data(input_data))
+        else:
+            result = catch_youdao(input_data)
         # 更新ListTask
         update_list = []
         for temp_key, temp_title_trans in result.items():
@@ -94,6 +118,8 @@ def get_task_from_db(max_num=10):
         if update_list:
             db.add_all(update_list)
             db.commit()
+        
+        
         
         # 更新news_detail表
         update_list = []

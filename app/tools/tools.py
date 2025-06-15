@@ -114,6 +114,9 @@ def exchange_date(date_str, mode):
             if date_str.split(" ")[1] in k:
                 date_str = date_str.replace(date_str.split(" ")[1], v)
                 date_obj = datetime.strptime(date_str, "%d %m %Y")
+    if mode == 11:
+        date_str = date_str.split(" ")[0]
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
     if not date_obj:
         date_obj = datetime.now()
     
