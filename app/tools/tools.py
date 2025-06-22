@@ -117,6 +117,27 @@ def exchange_date(date_str, mode):
     if mode == 11:
         date_str = date_str.split(" ")[0]
         date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    
+    if mode == 12:
+        date_str = date_str.split(",")[0] + date_str.split(",")[-1]
+        for k,v in month_map.items():
+            if date_str.split(" ")[0] in k:
+                date_str = date_str.replace(date_str.split(" ")[0], v)
+                date_obj = datetime.strptime(date_str, "%m %d %Y")
+    if mode == 13:
+        date_str = date_str.split("-")[0].strip().replace(",","")
+        for k,v in month_map.items():
+            if date_str.split(" ")[1] in k:
+                date_str = date_str.replace(date_str.split(" ")[1], v)
+                date_obj = datetime.strptime(date_str, "%d %m %Y")
+    if mode == 14:
+        date_str = date_str.split("-")[1].strip().replace(",","")
+        date_str = " ".join(date_str.split(" ")[:3])
+        for k,v in month_map.items():
+            if date_str.split(" ")[0] in k:
+                date_str = date_str.replace(date_str.split(" ")[0], v)
+                date_obj = datetime.strptime(date_str, "%m %d %Y")
+
     if not date_obj:
         date_obj = datetime.now()
     

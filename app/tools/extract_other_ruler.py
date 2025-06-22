@@ -300,6 +300,55 @@ def tag_p_filter_a1(content, xpath):
     content = [i for i in content if i.strip() != ""]
     return content
 
+def div_filter_a1(content, xpath):
+    # 解析HTML内容
+    soup = BeautifulSoup(content, 'html.parser')
+    
+    # 查找所有的a标签
+    for a_tag in soup.find_all('a'):
+        # 获取a标签的文本内容
+        a_text = a_tag.get_text(strip=False)
+        
+        # 将a标签的文本内容插入到其父元素中a标签的位置
+        a_tag.replace_with(a_text)
+    content = str(soup)
+    html_content = etree.HTML(content)
+    content = html_content.xpath(xpath)
+    content = [i for i in content if i.strip() != ""]
+    return content
+
+def p_filter_a_filter_span(content, xpath):
+    # 解析HTML内容
+    soup = BeautifulSoup(content, 'html.parser')
+
+    # 查找所有 p 标签
+    for p_tag in soup.find_all('p'):
+        # 创建一个新的 span 标签
+        new_span = soup.new_tag('span')
+        
+        # 遍历 p 标签下的所有直接子节点
+        for child in list(p_tag.children):
+            if isinstance(child, str):
+                # 如果是文本节点，添加到新 span 中
+                new_span.append(child)
+            elif child.name in ['span', 'a']:
+                # 如果是 span 或 a 标签，提取其文本并添加到新 span 中
+                new_span.append(child.get_text(strip=False))
+                # 移除原标签
+                child.decompose()
+            else:
+                # 其他类型的标签保持不变
+                pass
+        
+        # 如果新 span 包含内容，则添加到 p 标签中
+        if new_span.contents:
+            p_tag.append(new_span)
+    
+    content = str(soup).replace("\n"," ").replace("   "," ").replace("  "," ")
+    html_content = etree.HTML(content)
+    content = html_content.xpath(xpath)
+    content = [i for i in content if i.strip() != ""]
+    return content
 if __name__ == "__main__":
     url = "https://www.aljazeera.com/news/2025/4/14/algeria-orders-exit-of-french-officials-amid-rocky-relations"
     url = "https://www.dawn.com/news/1910183/leadership-responds-with-one-voice-to-indian-attacks"
