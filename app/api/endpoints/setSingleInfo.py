@@ -255,6 +255,8 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                             temp_pic_set = link_str
                         else:
                             temp_pic_set = ""
+                    else:
+                        temp_pic_set = ""
                 except:
                     temp_pic_set = ""
                     
