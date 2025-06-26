@@ -167,10 +167,7 @@ def is_image(binary_data):
 def upload_to_cos(rb_content, path):
     # 判断是否为图片
     judge_result = is_image(rb_content)
-    print("=============结果==============")
     if not judge_result:
-        print("=============结果==============")
-        print(judge_result)
         return None
 
     config = CosConfig(Region="ap-beijing", SecretId=settings.TENCENT_SECRETID, SecretKey=settings.TENCENT_SECRETKEY, Token=None, Scheme="https")
