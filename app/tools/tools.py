@@ -143,33 +143,8 @@ def exchange_date(date_str, mode):
     
     return date_obj
 
-def is_image(binary_data):
-    # JPEG (JFIF)
-    if binary_data.startswith(b'\xFF\xD8\xFF'):
-        return True
-    # PNG
-    elif binary_data.startswith(b'\x89PNG\r\n\x1a\n'):
-        return True
-    # GIF
-    elif binary_data.startswith((b'GIF87a', b'GIF89a')):
-        return True
-    # BMP
-    elif binary_data.startswith(b'BM'):
-        return True
-    # WebP (RIFF header)
-    elif binary_data.startswith(b'RIFF') and binary_data[8:12] == b'WEBP':
-        return True
-    # 其他格式可以在这里继续添加
-    else:
-        return False
-
 # 上传到cos
 def upload_to_cos(rb_content, path):
-    # 判断是否为图片
-    judge_result = is_image(rb_content)
-    if not judge_result:
-        return None
-
     config = CosConfig(Region="ap-beijing", SecretId=settings.TENCENT_SECRETID, SecretKey=settings.TENCENT_SECRETKEY, Token=None, Scheme="https")
     client = CosS3Client(config)
 
