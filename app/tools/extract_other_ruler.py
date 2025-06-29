@@ -349,6 +349,38 @@ def p_filter_a_filter_span(content, xpath):
     content = html_content.xpath(xpath)
     content = [i for i in content if i.strip() != ""]
     return content
+
+def p_filter_span_filter_a(content, xpath):
+    # 解析HTML内容
+    soup = BeautifulSoup(content, 'html.parser')
+
+    # 处理所有包含 <span> 的 <p> 标签
+    for p_tag in soup.find_all('p'):
+        span_tags = p_tag.find_all('span', recursive=False)
+        for span_tag in span_tags:
+            # 处理 <span> 中的 <a> 标签，将其文本合并到 <span> 中
+            a_tags = span_tag.find_all('a')
+            for a_tag in a_tags:
+                # 提取 <a> 标签中的文本
+                a_text = a_tag.get_text(strip=True).replace("\n"," ")
+                # 将 <a> 标签替换为其文本内容
+                a_tag.replace_with(a_text)
+            
+            # 提取 <span> 标签中的所有文本（保留空格和换行）
+            span_text = span_tag.get_text(strip=True).replace("\n"," ")
+            # 将 <span> 标签替换为其文本内容
+            span_tag.replace_with(span_text)
+    
+    # 清理 HTML 字符串
+    content = str(soup).replace("\n", " ").replace("   ", " ").replace("  ", " ")
+    html_content = etree.HTML(content)
+    content = html_content.xpath(xpath)
+    content = "\n".join([i.strip() for i in content if len(i.strip()) >= 1])
+    content = re.sub(r'(?<=[a-zA-Z])\n(?=[a-zA-Z])', ' ', content)
+    content = content.split("\n")
+    return content
+
+
 if __name__ == "__main__":
     url = "https://www.aljazeera.com/news/2025/4/14/algeria-orders-exit-of-french-officials-amid-rocky-relations"
     url = "https://www.dawn.com/news/1910183/leadership-responds-with-one-voice-to-indian-attacks"
