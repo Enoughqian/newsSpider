@@ -113,10 +113,6 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         filters.append(ListTask.create_time <= t_end_date)
         filters.append(ListTask.update_time >= t_start_date)
         filters.append(ListTask.update_time <= t_end_date)
-        print("==========")
-        print(t_start_date)
-        print(t_end_date)
-        print(state)
 
         # 中文关键词
         if chinakeyword is not None:
