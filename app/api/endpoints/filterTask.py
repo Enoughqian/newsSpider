@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse, ORJSONResponse
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select, Session, and_
 from sqlalchemy.sql.expression import func
+from sqlalchemy import literal_column
 from app.api import deps
 from app.config.env_config import settings
 from app.config.log_init import log_init_simple
@@ -104,12 +105,18 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             t_start_date = t_end_date - timedelta(days=2)
         else:
             t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
-            t_start_date = t_mid_date - timedelta(days=1)
+            t_start_date = t_mid_date - timedelta(days=90)
             t_end_date = t_mid_date + timedelta(days=1)
         
         # 过滤条件
+        filters.append(ListTask.create_time >= t_start_date)
+        filters.append(ListTask.create_time <= t_end_date)
         filters.append(ListTask.update_time >= t_start_date)
         filters.append(ListTask.update_time <= t_end_date)
+        print("==========")
+        print(t_start_date)
+        print(t_end_date)
+        print(state)
 
         # 中文关键词
         if chinakeyword is not None:
@@ -130,7 +137,10 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
     try:
         # 筛选条件
         if filters:
-            statement = statement.where(*filters).order_by(ListTask.update_time.desc())
+            statement = statement.where(*filters).order_by(
+                ListTask.update_time.desc(),
+                literal_column('id').desc()  # 直接引用数据库列名 "id"
+            )
             
         statement = statement.offset(offset).limit(num)
         count_statement = select(func.count(ListTask.id)).where(*filters) if filters else select(func.count(ListTask.id))
