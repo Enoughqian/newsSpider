@@ -61,24 +61,24 @@ def extract_page(self, data: dict):
     return extract_page_result
 
 if __name__ == "__main__":
-    data = {
-        "platform_id": "1000",
-        "link": "https://defence-blog.com/category/news/page/1/",
-        "spider_list_func": "spider_pjsget",
-        "extract_list_func": "extract_list_html",
-        "extract_list_params": {
-            "link": "//div[@class='td-module-meta-info td-module-meta-info-bottom']/h3/a/@href",
-            "title": "//div[@class='td-module-meta-info td-module-meta-info-bottom']/h3/a/text()",
-            "institution": "//x",
-            "country": "//x"
-        }
-    }
-    result = spider_list(data)
-    print(result)
-    with open("test.html","w") as f:
-        f.write(result["data"])
-    result_all = extract_list(result)
-    print(result_all)
+    # data = {
+    #     "platform_id": "1032",
+    #     "link": "https://oilprice.com/Latest-Energy-News/World-News/",
+    #     "spider_list_func": "spider_rget",
+    #     "extract_list_func": "extract_list_html",
+    #     "extract_list_params": {
+    #         "link": "//div[@class='categoryArticle']/div/a/@href",
+    #         "title": "//div[@class='categoryArticle']/div/a/h2/text()",
+    #         "institution": "//x",
+    #         "country": "//x"
+    #     }
+    # }
+    # result = spider_list(data)
+    # print(result)
+    # with open("test.html","w") as f:
+    #     f.write(result["data"])
+    # result_all = extract_list(result)
+    # print(result_all)
 
     # data = {
     #     "platform_id": "1000",
@@ -96,23 +96,25 @@ if __name__ == "__main__":
     # result_all = extract_list(result)
     # print(result_all)
 
-    # data = {
-    #     "id": 10685,
-    #     "platform_id": "1000",
-    #     "title": "Trio in Joshlin's Disappearance Set for Pre-Trial - South African News Briefs - January 31, 2025",
-    #     "link": "https://allafrica.com/stories/202501310074.html",
-    #     "spider_page_func": "spider_rget",
-    #     "extract_page_func": "extract_page_html",
-    #     "extract_page_params": {
-    #         "content": "//div[@class='story-body']/p/text()",
-    #         "pic_set": "//x",
-    #         "publish_date": "//div[@class='publication-date']/text()"
-    #     }
-    # }
+    data = {
+        "id": 102437,
+        "platform_id": "1028",
+        "link": "https://www.armyrecognition.com/news/army-news/2025/alert-russo-belarusian-zapad-2025-drill-with-oreshnik-hypersonic-missile-sparks-concerns-of-renewed-offensive-tactics",
+        "title": "Alert: Russo-Belarusian Zapad 2025 Drill With Oreshnik Hypersonic Missile Raises Concerns of Offensive Tactics.",
+        "spider_page_func": "spider_rget",
+        "extract_page_func": "extract_page_html",
+        "extract_page_params": {"content":"//div[@class='uk-panel uk-margin']/p/text()","pic_set":"//x","publish_date":"//a[@class='el-content uk-disabled']/text()"},
+        "date_type": 13,
+        "other_ruler": "div_filter_a1",
+        "domain": "www.armyrecognition.com"
+    }
 
-    # result = spider_page(data)
-    # result = extract_page(result)
-    # print(result)
+    result = spider_page(data)
+    print(result["data"])
+    with open("test.html","w") as f:
+        f.write(result["data"])
+    result = extract_page(result)
+    print(result)
 
     # data = {
     #     "platform_id": "1001",
@@ -182,10 +184,12 @@ if __name__ == "__main__":
     #         "pic_set": "//div[@class='col-sm-12 swift-in-viewport']/div/img/@src",
     #         "publish_date": "//div[@class='memo-news-date swift-in-viewport']/p/text()"
     #     },
+    #     "other_ruler": "p_filter_a1",
     #     "date_type": 3
     # }
     
     # result = spider_page(data)
+    # print(result["data"])
     # with open("demo.html","w") as f:
     #     f.write(result["data"])
     # result = extract_page(result)

@@ -14,6 +14,8 @@ from urllib.parse import urlparse
 import asyncio
 from playwright.async_api import async_playwright
 from app.script.get_fanyi import get_data_from_youdao
+from app.script.get_youdao_api import get_ydapi_result
+from app.script.get_xiaoniu_api import get_xnapi_result
 from copy import deepcopy
 import requests
 import time
@@ -80,7 +82,7 @@ def catch_youdao(params):
 
     return result
 
-def get_task_from_db(max_num=10):
+def get_task_from_db(max_num=400):
     with Session(engine, autoflush=False) as db:
         # 标题翻译
         # 标题翻译长度小于4的记录
@@ -99,12 +101,17 @@ def get_task_from_db(max_num=10):
             temp_title = temp_basic.title
             input_data[temp_unique_id] = temp_title
 
-        methods = "baidu"
+        methods = "xiaoniu"
         if methods == "baidu":
             # 请求
             result = asyncio.run(catch_data(input_data))
+        elif methods == "youdao":
+            result = get_ydapi_result(input_data)
         else:
-            result = catch_youdao(input_data)
+            result = get_xnapi_result(input_data)
+
+        print("===========结果==========")
+        print(result)
         # 更新ListTask
         update_list = []
         for temp_key, temp_title_trans in result.items():
@@ -128,6 +135,7 @@ def get_task_from_db(max_num=10):
                 NewsDetail.unique_id == temp_key
             )
             exist_basic = db.exec(smt).one_or_none()
+            
             if exist_basic:
                 exist_basic.title_translate = temp_title_trans
                 update_list.append(exist_basic)

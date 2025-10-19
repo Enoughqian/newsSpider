@@ -48,5 +48,13 @@ class Config(BaseSettings):
     SERVER_SHOW_DETAIL_HOST: str = os.getenv("SERVER_SHOW_DETAIL_HOST")
     SERVER_SHOW_DETAIL_PORT: str = os.getenv("SERVER_SHOW_DETAIL_PORT")
 
+    # 有道翻译
+    YOUDAO_APP_SECRET: str = os.getenv("YOUDAO_APP_SECRET")
+    YOUDAO_APP_KEY: str = os.getenv("YOUDAO_APP_KEY")
+
+    # 小牛翻译
+    XIAONIU_APP_ID: str = os.getenv("XIAONIU_APP_ID")
+    XIAONIU_APP_KEY: str = os.getenv("XIAONIU_APP_KEY")
+
     
 settings = Config()

@@ -104,7 +104,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
             t_start_date = t_end_date - timedelta(days=2)
         else:
             t_mid_date = datetime.strptime(str(datetime.now()).split(" ")[0], "%Y-%m-%d").date()
-            t_start_date = t_mid_date - timedelta(days=1)
+            t_start_date = t_mid_date - timedelta(days=15)
             t_end_date = t_mid_date + timedelta(days=1)
         
         # 过滤条件
