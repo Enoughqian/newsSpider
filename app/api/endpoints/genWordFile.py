@@ -51,12 +51,14 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
         return_format_json["err_code"] = 3
         return_format_json["msg"] = "输入页面参数错误"
         return return_format_json
-    
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
+    }
     try:
         select_data = get_data_from_db(idlist)
         if wordtype == "inner":
             try:
-                image_bytes = requests.get(piclink).content
+                image_bytes = requests.get(piclink, headers=headers, timeout=10).content
                 upload_pic_content = io.BytesIO(image_bytes)  # 这是一个 BytesIO 对象
             except Exception as e:
                 return_format_json["err_code"] = 2
@@ -78,7 +80,7 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 return return_format_json
         elif wordtype == "outter":
             try:
-                image_bytes = requests.get(piclink).content
+                image_bytes = requests.get(piclink, headers=headers, timeout=10).content
                 upload_pic_content = io.BytesIO(image_bytes)  # 这是一个 BytesIO 对象
             except Exception as e:
                 return_format_json["err_code"] = 2
