@@ -244,8 +244,11 @@ async def endpoint(request: Request, db: Session = Depends(deps.get_db), ):
                 )
 
                 # 下载图片
+                headers = {
+                    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
+                }
                 try:
-                    response = requests.get(temp_pic_set, timeout=5)
+                    response = requests.get(temp_pic_set, timeout=5, headers=headers)
                     rb_data = response.content
                     
                     if "html" not in str(response.text):
