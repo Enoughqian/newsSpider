@@ -3,6 +3,7 @@ import json
 import os
 import re
 from lxml import etree
+import numpy as np
 import pandas as pd
 from urllib.parse import urljoin
 from app.model.list_task import ListTask
@@ -28,32 +29,33 @@ def extract(data):
             # 获取domain
             domain = data["domain"]
             platform_id = data["platform_id"]
+
+            # 解析
+            len_content = [len(i) for i in page_html.xpath("//script/text()")]
+            max_index = np.argmax(len_content)
             
-            # 应用规则
-            result = [page_html.xpath(xpath) for key, xpath in html_params.items()]
-            print(result)
-            with open("test.html", "w") as f:
-                f.write(page_content)
-            
-            # 转为dataframe处理
-            result = pd.DataFrame(result).T
-            result.columns = ["链接","标题","发布机构","国家"]
-            result["标题"] = result["标题"].apply(lambda x: str(x).strip())
-            
-            # 去除特殊符号
-            for i in ["链接","发布机构","国家"]:
-                result[i] = result[i].apply(lambda x: str(x).strip())
-                result[i] = result[i].apply(lambda x: x.replace(":", ""))
-                result[i] = result[i].apply(lambda x: x if x != "None" else "")
-            # 拼接url
-            result["链接"] = result["链接"].apply(lambda x: x if "http" in x else urljoin(domain, x))
-            result = result.drop_duplicates(subset=["链接"], keep="first", inplace=False)
-            print(result)
-            
+            # 文本
+            content = page_html.xpath("//script/text()")[17]
+            start_index = content.index("{")
+            end_index = len(content) - content[::-1].index("}")
+
+            # 解析数据
+            data = json.loads(content[start_index:end_index].replace('\\',""))
+            data = data["payload"]["articles"]
+
+            # 数据解析
+            result = [
+                {
+                    "slug": "https://www.samaa.tv" + data[i].get("slug", ""),
+                    "title": data[i].get("title", "")
+                } for i in range(len(data)) if "slug" in data[i] and "title" in data[i]
+            ]
+
+            # ------------------------------------------
             with Session(engine, autoflush=False) as db:
                 insert_list = []
-                for item in result.values:
-                    temp_link = item[0] if ":" in item[0] else item[0].replace("https","https:")
+                for item in result:
+                    temp_link = item["slug"]
                     smt = select(ListTask).where(ListTask.link == temp_link)
                     exist_data = db.exec(smt).one_or_none()
                     if exist_data:
@@ -63,9 +65,9 @@ def extract(data):
                         exist_data = ListTask()
                         exist_data.link = temp_link
                         exist_data.platform_id = platform_id
-                        exist_data.title = item[1]
-                        exist_data.institution = item[2]
-                        exist_data.country = item[3]
+                        exist_data.title = item["title"]
+                        exist_data.institution = ""
+                        exist_data.country = ""
                         exist_data.tag = 2
                         exist_data.status = 2
                         exist_data.create_time = datetime.now()
@@ -85,4 +87,12 @@ def extract(data):
     return return_data
 
 if __name__ == "__main__":
-    pass
+    with open("demo.html", "r",encoding="utf-8") as f:
+        data = f.read()
+    result = {}
+    result["err_code"] = ""
+    result["data"] = data
+    result["domain"] = "www.samaa.tv"
+    result["platform_id"] = "1034"
+    result["info"] = "处理完成"
+    print(extract(result))

@@ -15,6 +15,7 @@ from app.tools.tools import exchange_date
 from app.tools.extract_other_ruler import *
 import importlib
 from copy import deepcopy
+import ast
 
 def extract(data):
     # 读取信息
@@ -32,7 +33,7 @@ def extract(data):
     html_params = data.get("extract_page_params")
     other_ruler = data.get("other_ruler")
 
-    date_type = int(data.get("date_type"))
+    date_type = None
     content = ""
 
     # 根据配置解析
@@ -59,35 +60,33 @@ def extract(data):
                 db.add(exist_data)
                 db.commit()
             
-            # 文章解析数据处理
-            for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>"]:
-                page_content = page_content.replace(i, "")
-            with open("test_m.html","w") as f:
-                f.write(page_content)
+            html_content = etree.HTML(page_content)
+            page = html_content.xpath("//script/text()")
 
-            # 原始先全部都解析一遍
-            page_html = etree.HTML(page_content)
-            result = [page_html.xpath(xpath) for key, xpath in html_params.items()]
-            print(result)
+            page = [i for i in page if '\\u003cp\\u003e\\u003cstrong\\u003e' in i][0]
+            page = page.encode('utf-8').decode('unicode-escape')
 
-            # 有规则的情况下
-            if len(other_ruler) > 0:
-                # 加载特殊处理方式
-                extract_charge_name = importlib.import_module(f"app.tools.extract_other_ruler")
-                extract_page_func = getattr(extract_charge_name, other_ruler)
-                temp_content = deepcopy(page_content)
-                temp_content_xpath = html_params["content"]
-                content = extract_page_func(temp_content, temp_content_xpath)
-                content = "\n".join([mm.strip().replace("\n", " ") for mm in content if mm.strip() != ""])
-            else:
-                content = "\n".join([mm.strip().replace("\n", " ") for mm in result[0] if mm.strip() != ""])
-                content = content.replace("  "," ")
-                print("===================")
-                print(content)
+            # 索引
+            start_index = page.index("<p><strong>")
+            try:
+                end_index = page.index('","excerpt"')
+            except:
+                end_index = len(page)
+            # 裁剪
+            content_data = page[start_index:end_index]
+            # 删除 <blockquote> ... </blockquote> 内容（包括标签）
+            content_data = re.sub(r'<blockquote[^>]*>.*?</blockquote>', '', content_data, flags=re.DOTALL)
+            # 删除 <script> ... </script> 内容（包括标签）
+            content_data = re.sub(r'<script[^>]*>.*?</script>', '', content_data, flags=re.DOTALL)
+            # 可选：清理多余空行
+            content_data = re.sub(r'\n\s*\n', '\n', content_data).strip()
+            for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>", "<p>", "</p>","</h2>","<h2>"]:
+                content_data = content_data.replace(i, "")
+            content_data = content_data.replace("\r\n\r\n","\n\r").replace(r"\n\r\n","").replace("\r","").replace("\n\n","\n").strip()[:-1]
 
             # 处理图片信息
             try:
-                temp_url = result[1][0]
+                temp_url = ""
                 if "http" not in temp_url:
                     pic_set = urljoin("https://" + domain, temp_url)
                 else:
@@ -96,10 +95,7 @@ def extract(data):
                 pic_set = ""
 
             # 处理日期信息
-            try:
-                publish_date = exchange_date("".join(result[2]).strip(), date_type)
-            except:
-                publish_date = datetime.now()
+            publish_date = datetime.now()
             
             # 按照长度处理
             if len(content.strip()) <100:
@@ -126,8 +122,8 @@ def extract(data):
                         exist_data.platform_id = platform_id
                         exist_data.title = title
                         exist_data.link = link
-                        exist_data.content = content
-                        exist_data.pic_set = pic_set
+                        exist_data.content = content_data
+                        exist_data.pic_set = ""
                         exist_data.publish_date = publish_date
                         exist_data.country = country
                         exist_data.abstract_state = 0
@@ -167,11 +163,25 @@ def extract(data):
             db.commit()
 
     return {
-        "content": content,
-        "pic_set": pic_set,
+        "content": content_data,
+        "pic_set": "",
         "publish_date": publish_date
     }
             
 
 if __name__ == "__main__":
-    pass
+    with open("demo.html", "r",encoding="utf-8") as f:
+        data = f.read()
+
+    result = {
+        "data": data,
+        "domain": "www.samaa.tv",
+        "id": "201477",
+        "platform_id": 1034,
+        "title": "PM Shehbaz meets Turkish FM ahead of diplomacy forum",
+        "link": "https://www.samaa.tv/2087349521-naqvi-briefs-pm-shehbaz-on-regional-situation",
+        "extract_page_params": "",
+        "err_code": ""
+    }
+    extract(result)
+    print(extract(result))

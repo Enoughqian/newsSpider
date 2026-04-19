@@ -41,13 +41,13 @@ def spider(data):
 
     try:
         # 请求
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=30)
     except Exception as e:
         # 抓取失败捕获
         state["err_code"] = 401
         state["info"] = str(e)
         return state
-    
+
     if len(response.text) < 100:
         # 抓取失败捕获
         state["err_code"] = 301
