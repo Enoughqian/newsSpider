@@ -101,7 +101,7 @@ def extract(data):
                         exist_data.country = country
                         exist_data.abstract_state = 0
                         exist_data.abstract = ""
-                        exist_data.translate_state = 0
+                        exist_data.translate_state = 1
                         exist_data.translate = ""
                         exist_data.classify_state = 0
                         exist_data.classify = ""

@@ -60,29 +60,33 @@ def extract(data):
                 db.add(exist_data)
                 db.commit()
             
-            html_content = etree.HTML(page_content)
-            page = html_content.xpath("//script/text()")
 
-            page = [i for i in page if '\\u003cp\\u003e\\u003cstrong\\u003e' in i][0]
-            page = page.encode('utf-8').decode('unicode-escape')
-
-            # 索引
-            start_index = page.index("<p><strong>")
             try:
-                end_index = page.index('","excerpt"')
+                html_content = etree.HTML(page_content)
+                page = html_content.xpath("//script/text()")
+
+                page = [i for i in page if '\\u003cp\\u003e\\u003cstrong\\u003e' in i][0]
+                page = page.encode('utf-8').decode('unicode-escape')
+
+                # 索引
+                start_index = page.index("<p><strong>")
+                try:
+                    end_index = page.index('","excerpt"')
+                except:
+                    end_index = len(page)
+                # 裁剪
+                content_data = page[start_index:end_index]
+                # 删除 <blockquote> ... </blockquote> 内容（包括标签）
+                content_data = re.sub(r'<blockquote[^>]*>.*?</blockquote>', '', content_data, flags=re.DOTALL)
+                # 删除 <script> ... </script> 内容（包括标签）
+                content_data = re.sub(r'<script[^>]*>.*?</script>', '', content_data, flags=re.DOTALL)
+                # 可选：清理多余空行
+                content_data = re.sub(r'\n\s*\n', '\n', content_data).strip()
+                for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>", "<p>", "</p>","</h2>","<h2>"]:
+                    content_data = content_data.replace(i, "")
+                content_data = content_data.replace("\r\n\r\n","\n\r").replace(r"\n\r\n","").replace("\r","").replace("\n\n","\n").strip()[:-1]
             except:
-                end_index = len(page)
-            # 裁剪
-            content_data = page[start_index:end_index]
-            # 删除 <blockquote> ... </blockquote> 内容（包括标签）
-            content_data = re.sub(r'<blockquote[^>]*>.*?</blockquote>', '', content_data, flags=re.DOTALL)
-            # 删除 <script> ... </script> 内容（包括标签）
-            content_data = re.sub(r'<script[^>]*>.*?</script>', '', content_data, flags=re.DOTALL)
-            # 可选：清理多余空行
-            content_data = re.sub(r'\n\s*\n', '\n', content_data).strip()
-            for i in ["<em>","</em>","<strong>","</strong>","<br>","<b>","</b>", "<p>", "</p>","</h2>","<h2>"]:
-                content_data = content_data.replace(i, "")
-            content_data = content_data.replace("\r\n\r\n","\n\r").replace(r"\n\r\n","").replace("\r","").replace("\n\n","\n").strip()[:-1]
+                content_data = ""
 
             # 处理图片信息
             try:
@@ -128,7 +132,7 @@ def extract(data):
                         exist_data.country = country
                         exist_data.abstract_state = 0
                         exist_data.abstract = ""
-                        exist_data.translate_state = 0
+                        exist_data.translate_state = 1
                         exist_data.translate = ""
                         exist_data.classify_state = 0
                         exist_data.classify = ""
